@@ -89,6 +89,7 @@ class MdbServerLogic
 public:
     MdbServerLogic();
     ~MdbServerLogic();
+	int32 init();
     int32 getUserInfoListFromBuf(const char * strBuf, int32 nLen, AISTD set<int64_t> & setID, const int32& idType);
     int32 queryMDB( aistring & strInput, int32 nType);
     int32 loginmdb();
@@ -103,9 +104,11 @@ public:
     aistring strRatUserName;
     aistring strRatPasswd;
     aistring strXcKeyPath;
+	aistring strConfigFile;
+	aistring strVal;
+	aistring strlogfile;
     MMdbQueryDef::SMdbQueryReturn g_cReturnMDB;
     MMdbQueryDef::SMdbQuery g_cQueryMDB;
-
 
 };
 

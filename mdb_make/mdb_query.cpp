@@ -15,28 +15,11 @@
 
 int queryType = 0;
 aistring strInput;
+MdbServerLogic logic;
 
-void* do_query(void *arg)
+void* do_query(void*)
 {
-	MdbServerLogic* logic = (MdbServerLogic*) arg;
-	int32 nQuit = 0;
-		switch (queryType)
-		{
-		case TOKEN_IMSI:
-			logic->queryMDB(strInput, TOKEN_IMSI);
-			break;
-
-		case TOKEN_MSISDN:
-			logic->queryMDB(strInput, TOKEN_MSISDN);
-			break;
-
-		case TOKEN_QUIT:
-			nQuit = 1;
-			break;
-
-		default:
-			break;
-		}
+	logic.queryMDB(strInput, queryType);
 }
 
 
@@ -47,32 +30,12 @@ int32 main(int argc, char** argv)
 {
 
 	extern char * optarg;
-	extern int optind;
-
-	aistring strConfigFile = "mdb_query.xml";
-	aistring strModuleName = "mdb_query";
-	aistring strlogfile = "./mdb_query.log";
 	int32  nOpt;
 
-	static aistring strUserName, strPasswd, strRatUserName, strRatPasswd = "";
-    static aistring strXcKeyPath = "";
-
-	while ((nOpt = getopt( argc, argv, "i:I:m:M:t:T:n:N:")) != EOF )
+	while ((nOpt = getopt( argc, argv, "t:T:n:N:")) != EOF )
 	{
 		switch (nOpt)
 		{
-		case	'i':
-		case	'I':
-		{
-			strConfigFile = optarg;
-			break;
-		}
-		case	'm':
-		case	'M':
-		{
-			strModuleName = optarg;
-			break;
-		}
 		case	't':
 		case	'T':
 		{
@@ -88,34 +51,7 @@ int32 main(int argc, char** argv)
 		}
 	}
 
-	aiconfig::AiConfig *pConfig = aiconfig::AiConfig::GetInstance();
-	if (-1 == pConfig->InitConfigData(aiconfig::XML_FILE, strConfigFile.c_str()))
-	{
-		printf("InitConfigData Error\n");
-		return -1;
-	}
-	pConfig->ReadVal(pConfig->GetConfigContainer(), "/root/common_config/xc_key_path", strXcKeyPath);
-	aistring strVal;
-	if (-1 == cdk::strings::ConvertEnv(strXcKeyPath, strVal))
-	{
-		LOG_ERROR(0, "xc_key_path env error!\n");
-	}
-	//pConfig->ReadVal(pConfig->GetConfigContainer(), "/root/mdb_query/passwd", strPasswd);
-	pConfig->ReadVal(pConfig->GetConfigContainer(), "/root/mdb_query/user_name", strUserName);
-	pConfig->ReadVal(pConfig->GetConfigContainer(), "/root/mdb_query/passwd", strPasswd);
-	strRatUserName = strUserName;
-	strRatPasswd = strPasswd;
-	pConfig->ReadVal(pConfig->GetConfigContainer(), "/root/mdb_query/rat_user_name", strRatUserName);
-	pConfig->ReadVal(pConfig->GetConfigContainer(), "/root/mdb_query/rat_passwd", strRatPasswd);
-	//pConfig->ReadVal(pConfig->GetConfigContainer(), "/root/mdb_query/log_file", strlogfile);
-	cdk::log::SetFileLogger(strlogfile.c_str());
-
-	MdbServerLogic logic;
-	logic.strUserName = strUserName;
-    logic.strPasswd = strPasswd;
-    logic.strRatUserName = strRatUserName;
-    logic.strRatPasswd = strRatPasswd;
-    logic.strXcKeyPath = strXcKeyPath;
+	logic.init();
 
 	try
 	{
@@ -128,7 +64,7 @@ int32 main(int argc, char** argv)
 	}
 	try
 	{
-		xc::Attach(strVal.c_str());
+		xc::Attach(logic.strVal.c_str());
 	}
 	catch (...)
 	{
@@ -136,15 +72,11 @@ int32 main(int argc, char** argv)
 		return -1;
 	}
 
-	LOG_INFO("Procedure %s begins ", strModuleName.c_str());
-
 	pthread_t ntid;
-	pthread_create(&ntid, NULL, do_query, (void*)&logic);
-
+	pthread_create(&ntid, NULL, do_query, NULL);
 	pthread_join(ntid, NULL);
-	sal::Shutdown();
 
-	LOG_INFO("Procedure %s end ", strModuleName.c_str());
+	sal::Shutdown();
 
 	return 1;
 }
