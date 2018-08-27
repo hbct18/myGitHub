@@ -654,46 +654,10 @@ static aistring __get_sourceFileName()
     return s;
 }
 
-#if !defined(SDL_SELECTED_API) || defined(SDL_USE_MMDBQUERYDEF_SMDBQUERY)
-// struct definition for SMdbQuery
-static sdl::CSdlTypeInfo s_cTypeInfo4MMdbQueryDef_SMdbQuery(SDL_STRUCT, "SMdbQuery",
-    sdl::CSdlTypeInfo::create_typeDescription(__get_sourceFileName().c_str(),
-        __LINE__, s_szCompileDate, s_szCompileTime).c_str(),
-    sizeof(SMdbQuery), 3,
-    "int64", SDL_INT64,
-    "aistring", SDL_STRING,
-    "aistring", SDL_STRING);
-static sdl::CSdlTypeInfoImpl s_cTypeInfoImpl4MMdbQueryDef_SMdbQuery(s_cTypeInfo4MMdbQueryDef_SMdbQuery);
-
-static sdl::SSdlMemberTypeInfo s_MMdbQueryDef_SMdbQuery_MemberTypeInfo[3 + 1] =
-{
-    { SDL_INT64, "FLAG", sizeof(int64), -1, 0, reinterpret_cast<FuncSdlAssign>(sdl_assignInt64),I64(0x1),0,"int64",0},
-    { SDL_STRING, "TABLE_NAME", sizeof(aistring), -1, 0, reinterpret_cast<FuncSdlAssign>(sdl_assignString),I64(0x2),1,"aistring",0},
-    { SDL_STRING, "QUERY", sizeof(aistring), -1, 0, reinterpret_cast<FuncSdlAssign>(sdl_assignString),I64(0x4),2,"aistring",0},
-    { -1, 0, 0, 0, 0, 0 ,0}
-};
-
-extern "C" sdl::SSdlMemberTypeAddress get_MMdbQueryDef_SMdbQuery_MemberTypeAddress()
-{
-    sdl::SSdlMemberTypeAddress Addr;
-    Addr.addr = s_MMdbQueryDef_SMdbQuery_MemberTypeInfo;
-    Addr.size = 3;
-    return Addr;
-}
-extern "C" const char* get_MMdbQueryDef_SMdbQuery_MemberType_IndexString4Lua()
-{
-    static char MMdbQueryDef_SMdbQuery_MemberType_IndexString[] = 
-"\
-local MMdbQueryDef_SMdbQuery_FLAG=0;\n\
-local MMdbQueryDef_SMdbQuery_TABLE_NAME=1;\n\
-local MMdbQueryDef_SMdbQuery_QUERY=2;\n\
-";
-    return MMdbQueryDef_SMdbQuery_MemberType_IndexString;
-}
-//static Mapsdl::SSdlMemberTypeInfo map_MMdbQueryDef_SMdbQuery_MapMemberTypeInfo;
-//static SMapSSdlMemberTypeInfo s_MMdbQueryDef_SMdbQuery_MapMemberTypeInfo = {map_MMdbQueryDef_SMdbQuery_MapMemberTypeInfo};
+/*class SMdbQuery*/
 static SMapSSdlMemberTypeInfo s_MMdbQueryDef_SMdbQuery_MapMemberTypeInfo;
-static CMapSdlStructMemberTypeInitializer s_MapMMdbQueryDef_SMdbQuery(&s_MMdbQueryDef_SMdbQuery_MapMemberTypeInfo,s_MMdbQueryDef_SMdbQuery_MemberTypeInfo,3);
+static CMapSdlStructMemberTypeInitializer s_MapMMdbQueryDef_SMdbQuery(&s_MMdbQueryDef_SMdbQuery_MapMemberTypeInfo,
+    s_MMdbQueryDef_SMdbQuery_MemberTypeInfo,3);
 static CSdlStructMemberTypeInitializer s_MMdbQueryDef_SMdbQuery(s_MMdbQueryDef_SMdbQuery_MemberTypeInfo,
     SMdbQuery());
 
@@ -727,7 +691,6 @@ void inline SMdbQuery::init()
     m_pllDbMarker = const_cast<uint64*>(BITS_DB_MARKER_ARR);
     m_iMarkerNum = 1;
     m_iFieldNum = 3;
- /* do nothing */ 
 }
 
 SMdbQuery::SMdbQuery() : sdl::CSdlBasicStructObject(),
@@ -738,90 +701,8 @@ SMdbQuery::SMdbQuery() : sdl::CSdlBasicStructObject(),
 	init();
 }
 
-SMdbQuery::SMdbQuery(obb_stream& stream) : sdl::CSdlBasicStructObject() ,
-    m_llFlag(0),
-    m_strTableName(),
-    m_strQuery()
-{ 
-	init();
-	stream >> *this;
-}
-
-SMdbQuery::SMdbQuery(const SMdbQuery& rhs) : sdl::CSdlBasicStructObject(rhs),
-    m_llFlag(0),
-    m_strTableName(),
-    m_strQuery()
-{ 
-    init();
-    m_iMarkerNum = rhs.m_iMarkerNum;
-    m_iFieldNum = rhs.m_iFieldNum;
-    for(int i=0;i<rhs.get_markerNum();i++)
-    {
-        m_pllUsedMarker[i] = rhs.m_pllUsedMarker[i];
-        m_pllMarker[i] = rhs.m_pllMarker[i];
-    }
-    if (rhs.m_pllUsedMarker[0] & BIT_FLAG)
-        m_llFlag = rhs.m_llFlag;
-    if (rhs.m_pllUsedMarker[0] & BIT_TABLE_NAME)
-        m_strTableName = rhs.m_strTableName;
-    if (rhs.m_pllUsedMarker[0] & BIT_QUERY)
-        m_strQuery = rhs.m_strQuery;
-}
-
 SMdbQuery::~SMdbQuery()
 { 
-}
-
-SMdbQuery& SMdbQuery::operator=(const SMdbQuery& rhs) 
-{
-    if ( this != &rhs )
-    {
-        Clear();
-        sdl::CSdlBasicStructObject::operator = (rhs);
-        m_iMarkerNum = rhs.m_iMarkerNum;
-        m_iFieldNum = rhs.m_iFieldNum;
-        for(int i=0;i<rhs.get_markerNum();i++)
-        {
-            m_pllUsedMarker[i] = rhs.m_pllUsedMarker[i];
-            m_pllMarker[i] = rhs.m_pllMarker[i];
-        }
-        if (rhs.m_pllUsedMarker[0] & BIT_FLAG)
-            m_llFlag = rhs.m_llFlag;
-        if (rhs.m_pllUsedMarker[0] & BIT_TABLE_NAME)
-            m_strTableName = rhs.m_strTableName;
-        if (rhs.m_pllUsedMarker[0] & BIT_QUERY)
-            m_strQuery = rhs.m_strQuery;
-    }
-    return *this;
-}
-
-bool SMdbQuery::operator==(const SMdbQuery& rhs) const
-{
-    if ( this == &rhs ) return true;
-    if(m_iMarkerNum != rhs.m_iMarkerNum) return false;
-    if(m_iFieldNum != rhs.m_iFieldNum) return false;
-    for(int i=0;i<m_iMarkerNum;i++)
-    {
-        if ( m_pllUsedMarker[i] != rhs.m_pllUsedMarker[i] || m_pllMarker[i] != rhs.m_pllMarker[i] )
-        {
-            return false;
-        }
-    }
-    if ((m_pllMarker[0]&BIT_FLAG) && !(m_llFlag == rhs.m_llFlag)) return false;
-    if ((m_pllMarker[0]&BIT_TABLE_NAME) && !(m_strTableName == rhs.m_strTableName)) return false;
-    if ((m_pllMarker[0]&BIT_QUERY) && !(m_strQuery == rhs.m_strQuery)) return false;
-    return true;
-}
-
-bool SMdbQuery::operator<(const SMdbQuery& rhs) const
-{
-    return !( *this == rhs );
-/*
-	else
-	{
-		return m_pComparer->lessThan(this,&rhs);
-	}
-*/
 }
 
 const sdl::CSdlTypeInfo& SMdbQuery::get_typeInfo() const
@@ -833,7 +714,8 @@ const sdl::CSdlBasicStructObject::CClassDesc& SMdbQuery::class_desc() const
 {
     static const sdl::CSdlBasicStructObject::CClassDesc cClassDesc(BITS_ALL_MARKER,
         BITS_NOT_NULL_MARKER, BITS_DB_MARKER, IMPORT_TABLE_COUNT, MEMBER_FIELD_COUNT,
-        SZ_TYPE_NAME, ARRAY_IMPORT_TABLES, s_MMdbQueryDef_SMdbQuery_MemberTypeInfo,&s_MMdbQueryDef_SMdbQuery_MapMemberTypeInfo);
+        SZ_TYPE_NAME, ARRAY_IMPORT_TABLES, s_MMdbQueryDef_SMdbQuery_MemberTypeInfo,
+        &s_MMdbQueryDef_SMdbQuery_MapMemberTypeInfo);
     return cClassDesc;
 }
 
@@ -849,24 +731,6 @@ void SMdbQuery::Clear()
     m_strQuery.clear();
 }
 
-void SMdbQuery::Clear4Pool()
-{
-	for(int i=0;i<1;i++)
-	{
-		m_arrllMarker[i] = 0;
-		m_arrllUsedMarker[i] = 0;
-	}
-    m_llFlag = 0;
-    m_strTableName.clear();
-    m_strQuery.clear();
-}
-
-CSdlBasicObject* SMdbQuery::create_object()
-{
-    return new SMdbQuery();
-}
-static CSdlCreateObjectInitializer s_MMdbQueryDef_SMdbQuery_SdlCreateObjectInitializer("SMdbQuery", SMdbQuery::create_object);
-
 const void* SMdbQuery::get_addressTable(const void* pTable[3]) const
 {
     if ( pTable != 0 )
@@ -878,10 +742,9 @@ const void* SMdbQuery::get_addressTable(const void* pTable[3]) const
     }
     return &m_llFlag;
 }
-#endif
+/*End of class SMdbQuery*/
 
-#if !defined(SDL_SELECTED_API) || defined(SDL_USE_MMDBQUERYDEF_SMDBQUERYLIST)
-// list definition for SMdbQueryList
+
 SMdbQueryList::SMdbQueryList() : sdl::CSdlBasicListObject(),poolvector<SMdbQuery>()
 {
 }
@@ -902,10 +765,7 @@ void* SMdbQueryList::append_item()
 
 void SMdbQueryList::change_size(const int iNewSize)
 {
-    //resize(iNewSize > 0 ? iNewSize : 0 );
     resize(iNewSize > 0 ? iNewSize : 0);
-   //if(iNewSize > 0) resize(iNewSize);
-   //else clear();
 }
 
 const void* SMdbQueryList::get_addrOfFirstItem() const
@@ -964,59 +824,8 @@ const sdl::CSdlTypeInfo& SMdbQueryList::get_typeInfo() const
 {
     return s_cTypeInfo4MMdbQueryDef_SMdbQueryList;
 }
-#endif
 
-#if !defined(SDL_SELECTED_API) || defined(SDL_USE_MMDBQUERYDEF_SMDBQUERYRETURN)
-// struct definition for SMdbQueryReturn
-static sdl::CSdlTypeInfo s_cTypeInfo4MMdbQueryDef_SMdbQueryReturn(SDL_STRUCT, "SMdbQueryReturn",
-    sdl::CSdlTypeInfo::create_typeDescription(__get_sourceFileName().c_str(),
-        __LINE__, s_szCompileDate, s_szCompileTime).c_str(),
-    sizeof(SMdbQueryReturn), 1,
-    "aistring", SDL_STRING);
-static sdl::CSdlTypeInfoImpl s_cTypeInfoImpl4MMdbQueryDef_SMdbQueryReturn(s_cTypeInfo4MMdbQueryDef_SMdbQueryReturn);
 
-static sdl::SSdlMemberTypeInfo s_MMdbQueryDef_SMdbQueryReturn_MemberTypeInfo[1 + 1] =
-{
-    { SDL_STRING, "RESULT", sizeof(aistring), -1, 0, reinterpret_cast<FuncSdlAssign>(sdl_assignString),I64(0x1),0,"aistring",0},
-    { -1, 0, 0, 0, 0, 0 ,0}
-};
-
-extern "C" sdl::SSdlMemberTypeAddress get_MMdbQueryDef_SMdbQueryReturn_MemberTypeAddress()
-{
-    sdl::SSdlMemberTypeAddress Addr;
-    Addr.addr = s_MMdbQueryDef_SMdbQueryReturn_MemberTypeInfo;
-    Addr.size = 1;
-    return Addr;
-}
-extern "C" const char* get_MMdbQueryDef_SMdbQueryReturn_MemberType_IndexString4Lua()
-{
-    static char MMdbQueryDef_SMdbQueryReturn_MemberType_IndexString[] = 
-"\
-local MMdbQueryDef_SMdbQueryReturn_RESULT=0;\n\
-";
-    return MMdbQueryDef_SMdbQueryReturn_MemberType_IndexString;
-}
-//static Mapsdl::SSdlMemberTypeInfo map_MMdbQueryDef_SMdbQueryReturn_MapMemberTypeInfo;
-//static SMapSSdlMemberTypeInfo s_MMdbQueryDef_SMdbQueryReturn_MapMemberTypeInfo = {map_MMdbQueryDef_SMdbQueryReturn_MapMemberTypeInfo};
-static SMapSSdlMemberTypeInfo s_MMdbQueryDef_SMdbQueryReturn_MapMemberTypeInfo;
-static CMapSdlStructMemberTypeInitializer s_MapMMdbQueryDef_SMdbQueryReturn(&s_MMdbQueryDef_SMdbQueryReturn_MapMemberTypeInfo,s_MMdbQueryDef_SMdbQueryReturn_MemberTypeInfo,1);
-static CSdlStructMemberTypeInitializer s_MMdbQueryDef_SMdbQueryReturn(s_MMdbQueryDef_SMdbQueryReturn_MemberTypeInfo,
-    SMdbQueryReturn());
-
-const uint64 SMdbQueryReturn::BIT_RESULT = I64(0x1);
-const uint64 SMdbQueryReturn::BITS_ALL_MARKER = I64(0x1);
-const uint64 SMdbQueryReturn::BITS_NOT_NULL_MARKER = I64(0x0);
-const uint64 SMdbQueryReturn::BITS_DB_MARKER = I64(0x0);
-const uint64 SMdbQueryReturn::BITS_NOT_NULL_MARKER_ARR[] = {I64(0x0)};
-const uint64 SMdbQueryReturn::BITS_DB_MARKER_ARR[] = {I64(0x0)};
-const int SMdbQueryReturn::IMPORT_TABLE_COUNT = 0;
-const int SMdbQueryReturn::MEMBER_FIELD_COUNT = 1;
-const char* SMdbQueryReturn::SZ_TYPE_NAME = "SMdbQueryReturn";
-const sdl::SSdlMemberTypeInfo* SMdbQueryReturn::ARRAY_MEMBER_TYPE_INFO = s_MMdbQueryDef_SMdbQueryReturn_MemberTypeInfo;
-const char* SMdbQueryReturn::ARRAY_IMPORT_TABLES[] = 
-{
-    0
-};
 
 void inline SMdbQueryReturn::init()
 {
@@ -1040,76 +849,8 @@ SMdbQueryReturn::SMdbQueryReturn() : sdl::CSdlBasicStructObject(),
 	init();
 }
 
-SMdbQueryReturn::SMdbQueryReturn(obb_stream& stream) : sdl::CSdlBasicStructObject() ,
-    m_strResult()
-{ 
-	init();
-	stream >> *this;
-}
-
-SMdbQueryReturn::SMdbQueryReturn(const SMdbQueryReturn& rhs) : sdl::CSdlBasicStructObject(rhs),
-    m_strResult()
-{ 
-    init();
-    m_iMarkerNum = rhs.m_iMarkerNum;
-    m_iFieldNum = rhs.m_iFieldNum;
-    for(int i=0;i<rhs.get_markerNum();i++)
-    {
-        m_pllUsedMarker[i] = rhs.m_pllUsedMarker[i];
-        m_pllMarker[i] = rhs.m_pllMarker[i];
-    }
-    if (rhs.m_pllUsedMarker[0] & BIT_RESULT)
-        m_strResult = rhs.m_strResult;
-}
-
 SMdbQueryReturn::~SMdbQueryReturn()
 { 
-}
-
-SMdbQueryReturn& SMdbQueryReturn::operator=(const SMdbQueryReturn& rhs) 
-{
-    if ( this != &rhs )
-    {
-        Clear();
-        sdl::CSdlBasicStructObject::operator = (rhs);
-        m_iMarkerNum = rhs.m_iMarkerNum;
-        m_iFieldNum = rhs.m_iFieldNum;
-        for(int i=0;i<rhs.get_markerNum();i++)
-        {
-            m_pllUsedMarker[i] = rhs.m_pllUsedMarker[i];
-            m_pllMarker[i] = rhs.m_pllMarker[i];
-        }
-        if (rhs.m_pllUsedMarker[0] & BIT_RESULT)
-            m_strResult = rhs.m_strResult;
-    }
-    return *this;
-}
-
-bool SMdbQueryReturn::operator==(const SMdbQueryReturn& rhs) const
-{
-    if ( this == &rhs ) return true;
-    if(m_iMarkerNum != rhs.m_iMarkerNum) return false;
-    if(m_iFieldNum != rhs.m_iFieldNum) return false;
-    for(int i=0;i<m_iMarkerNum;i++)
-    {
-        if ( m_pllUsedMarker[i] != rhs.m_pllUsedMarker[i] || m_pllMarker[i] != rhs.m_pllMarker[i] )
-        {
-            return false;
-        }
-    }
-    if ((m_pllMarker[0]&BIT_RESULT) && !(m_strResult == rhs.m_strResult)) return false;
-    return true;
-}
-
-bool SMdbQueryReturn::operator<(const SMdbQueryReturn& rhs) const
-{
-    return !( *this == rhs );
-/*
-	else
-	{
-		return m_pComparer->lessThan(this,&rhs);
-	}
-*/
 }
 
 const sdl::CSdlTypeInfo& SMdbQueryReturn::get_typeInfo() const
@@ -1125,31 +866,6 @@ const sdl::CSdlBasicStructObject::CClassDesc& SMdbQueryReturn::class_desc() cons
     return cClassDesc;
 }
 
-void SMdbQueryReturn::Clear()
-{
-	for(int i=0;i<1;i++)
-	{
-		m_arrllMarker[i] = 0;
-		m_arrllUsedMarker[i] = 0;
-	}
-    m_strResult.clear();
-}
-
-void SMdbQueryReturn::Clear4Pool()
-{
-	for(int i=0;i<1;i++)
-	{
-		m_arrllMarker[i] = 0;
-		m_arrllUsedMarker[i] = 0;
-	}
-    m_strResult.clear();
-}
-
-CSdlBasicObject* SMdbQueryReturn::create_object()
-{
-    return new SMdbQueryReturn();
-}
-static CSdlCreateObjectInitializer s_MMdbQueryDef_SMdbQueryReturn_SdlCreateObjectInitializer("SMdbQueryReturn", SMdbQueryReturn::create_object);
 
 const void* SMdbQueryReturn::get_addressTable(const void* pTable[1]) const
 {
@@ -1160,10 +876,8 @@ const void* SMdbQueryReturn::get_addressTable(const void* pTable[1]) const
     }
     return &m_strResult;
 }
-#endif
 
-#if !defined(SDL_SELECTED_API) || defined(SDL_USE_MMDBQUERYDEF_SMDBQUERYRETURNLIST)
-// list definition for SMdbQueryReturnList
+
 SMdbQueryReturnList::SMdbQueryReturnList() : sdl::CSdlBasicListObject(),poolvector<SMdbQueryReturn>()
 {
 }
@@ -1184,10 +898,7 @@ void* SMdbQueryReturnList::append_item()
 
 void SMdbQueryReturnList::change_size(const int iNewSize)
 {
-    //resize(iNewSize > 0 ? iNewSize : 0 );
     resize(iNewSize > 0 ? iNewSize : 0);
-   //if(iNewSize > 0) resize(iNewSize);
-   //else clear();
 }
 
 const void* SMdbQueryReturnList::get_addrOfFirstItem() const
@@ -1246,10 +957,8 @@ const sdl::CSdlTypeInfo& SMdbQueryReturnList::get_typeInfo() const
 {
     return s_cTypeInfo4MMdbQueryDef_SMdbQueryReturnList;
 }
-#endif
 
-#if !defined(SDL_SELECTED_API) || defined(SDL_USE_MMDBQUERYDEF_SMDBSECLOGIN)
-// struct definition for SMdbSecLogin
+
 static sdl::CSdlTypeInfo s_cTypeInfo4MMdbQueryDef_SMdbSecLogin(SDL_STRUCT, "SMdbSecLogin",
     sdl::CSdlTypeInfo::create_typeDescription(__get_sourceFileName().c_str(),
         __LINE__, s_szCompileDate, s_szCompileTime).c_str(),
@@ -1281,8 +990,6 @@ local MMdbQueryDef_SMdbSecLogin_PASSWD=1;\n\
 ";
     return MMdbQueryDef_SMdbSecLogin_MemberType_IndexString;
 }
-//static Mapsdl::SSdlMemberTypeInfo map_MMdbQueryDef_SMdbSecLogin_MapMemberTypeInfo;
-//static SMapSSdlMemberTypeInfo s_MMdbQueryDef_SMdbSecLogin_MapMemberTypeInfo = {map_MMdbQueryDef_SMdbSecLogin_MapMemberTypeInfo};
 static SMapSSdlMemberTypeInfo s_MMdbQueryDef_SMdbSecLogin_MapMemberTypeInfo;
 static CMapSdlStructMemberTypeInitializer s_MapMMdbQueryDef_SMdbSecLogin(&s_MMdbQueryDef_SMdbSecLogin_MapMemberTypeInfo,s_MMdbQueryDef_SMdbSecLogin_MemberTypeInfo,2);
 static CSdlStructMemberTypeInitializer s_MMdbQueryDef_SMdbSecLogin(s_MMdbQueryDef_SMdbSecLogin_MemberTypeInfo,
@@ -1327,83 +1034,8 @@ SMdbSecLogin::SMdbSecLogin() : sdl::CSdlBasicStructObject(),
 	init();
 }
 
-SMdbSecLogin::SMdbSecLogin(obb_stream& stream) : sdl::CSdlBasicStructObject() ,
-    m_strUserName(),
-    m_strPasswd()
-{ 
-	init();
-	stream >> *this;
-}
-
-SMdbSecLogin::SMdbSecLogin(const SMdbSecLogin& rhs) : sdl::CSdlBasicStructObject(rhs),
-    m_strUserName(),
-    m_strPasswd()
-{ 
-    init();
-    m_iMarkerNum = rhs.m_iMarkerNum;
-    m_iFieldNum = rhs.m_iFieldNum;
-    for(int i=0;i<rhs.get_markerNum();i++)
-    {
-        m_pllUsedMarker[i] = rhs.m_pllUsedMarker[i];
-        m_pllMarker[i] = rhs.m_pllMarker[i];
-    }
-    if (rhs.m_pllUsedMarker[0] & BIT_USER_NAME)
-        m_strUserName = rhs.m_strUserName;
-    if (rhs.m_pllUsedMarker[0] & BIT_PASSWD)
-        m_strPasswd = rhs.m_strPasswd;
-}
-
 SMdbSecLogin::~SMdbSecLogin()
 { 
-}
-
-SMdbSecLogin& SMdbSecLogin::operator=(const SMdbSecLogin& rhs) 
-{
-    if ( this != &rhs )
-    {
-        Clear();
-        sdl::CSdlBasicStructObject::operator = (rhs);
-        m_iMarkerNum = rhs.m_iMarkerNum;
-        m_iFieldNum = rhs.m_iFieldNum;
-        for(int i=0;i<rhs.get_markerNum();i++)
-        {
-            m_pllUsedMarker[i] = rhs.m_pllUsedMarker[i];
-            m_pllMarker[i] = rhs.m_pllMarker[i];
-        }
-        if (rhs.m_pllUsedMarker[0] & BIT_USER_NAME)
-            m_strUserName = rhs.m_strUserName;
-        if (rhs.m_pllUsedMarker[0] & BIT_PASSWD)
-            m_strPasswd = rhs.m_strPasswd;
-    }
-    return *this;
-}
-
-bool SMdbSecLogin::operator==(const SMdbSecLogin& rhs) const
-{
-    if ( this == &rhs ) return true;
-    if(m_iMarkerNum != rhs.m_iMarkerNum) return false;
-    if(m_iFieldNum != rhs.m_iFieldNum) return false;
-    for(int i=0;i<m_iMarkerNum;i++)
-    {
-        if ( m_pllUsedMarker[i] != rhs.m_pllUsedMarker[i] || m_pllMarker[i] != rhs.m_pllMarker[i] )
-        {
-            return false;
-        }
-    }
-    if ((m_pllMarker[0]&BIT_USER_NAME) && !(m_strUserName == rhs.m_strUserName)) return false;
-    if ((m_pllMarker[0]&BIT_PASSWD) && !(m_strPasswd == rhs.m_strPasswd)) return false;
-    return true;
-}
-
-bool SMdbSecLogin::operator<(const SMdbSecLogin& rhs) const
-{
-    return !( *this == rhs );
-/*
-	else
-	{
-		return m_pComparer->lessThan(this,&rhs);
-	}
-*/
 }
 
 const sdl::CSdlTypeInfo& SMdbSecLogin::get_typeInfo() const
@@ -1430,23 +1062,6 @@ void SMdbSecLogin::Clear()
     m_strPasswd.clear();
 }
 
-void SMdbSecLogin::Clear4Pool()
-{
-	for(int i=0;i<1;i++)
-	{
-		m_arrllMarker[i] = 0;
-		m_arrllUsedMarker[i] = 0;
-	}
-    m_strUserName.clear();
-    m_strPasswd.clear();
-}
-
-CSdlBasicObject* SMdbSecLogin::create_object()
-{
-    return new SMdbSecLogin();
-}
-static CSdlCreateObjectInitializer s_MMdbQueryDef_SMdbSecLogin_SdlCreateObjectInitializer("SMdbSecLogin", SMdbSecLogin::create_object);
-
 const void* SMdbSecLogin::get_addressTable(const void* pTable[2]) const
 {
     if ( pTable != 0 )
@@ -1457,10 +1072,8 @@ const void* SMdbSecLogin::get_addressTable(const void* pTable[2]) const
     }
     return &m_strUserName;
 }
-#endif
 
-#if !defined(SDL_SELECTED_API) || defined(SDL_USE_MMDBQUERYDEF_SMDBSECLOGINLIST)
-// list definition for SMdbSecLoginList
+
 SMdbSecLoginList::SMdbSecLoginList() : sdl::CSdlBasicListObject(),poolvector<SMdbSecLogin>()
 {
 }
@@ -1481,10 +1094,7 @@ void* SMdbSecLoginList::append_item()
 
 void SMdbSecLoginList::change_size(const int iNewSize)
 {
-    //resize(iNewSize > 0 ? iNewSize : 0 );
     resize(iNewSize > 0 ? iNewSize : 0);
-   //if(iNewSize > 0) resize(iNewSize);
-   //else clear();
 }
 
 const void* SMdbSecLoginList::get_addrOfFirstItem() const
@@ -1543,10 +1153,8 @@ const sdl::CSdlTypeInfo& SMdbSecLoginList::get_typeInfo() const
 {
     return s_cTypeInfo4MMdbQueryDef_SMdbSecLoginList;
 }
-#endif
 
-#if !defined(SDL_SELECTED_API) || defined(SDL_USE_MMDBQUERYDEF_SMDBSECLOGINRETURN)
-// struct definition for SMdbSecLoginReturn
+
 static sdl::CSdlTypeInfo s_cTypeInfo4MMdbQueryDef_SMdbSecLoginReturn(SDL_STRUCT, "SMdbSecLoginReturn",
     sdl::CSdlTypeInfo::create_typeDescription(__get_sourceFileName().c_str(),
         __LINE__, s_szCompileDate, s_szCompileTime).c_str(),
@@ -1578,8 +1186,6 @@ local MMdbQueryDef_SMdbSecLoginReturn_MSG=1;\n\
 ";
     return MMdbQueryDef_SMdbSecLoginReturn_MemberType_IndexString;
 }
-//static Mapsdl::SSdlMemberTypeInfo map_MMdbQueryDef_SMdbSecLoginReturn_MapMemberTypeInfo;
-//static SMapSSdlMemberTypeInfo s_MMdbQueryDef_SMdbSecLoginReturn_MapMemberTypeInfo = {map_MMdbQueryDef_SMdbSecLoginReturn_MapMemberTypeInfo};
 static SMapSSdlMemberTypeInfo s_MMdbQueryDef_SMdbSecLoginReturn_MapMemberTypeInfo;
 static CMapSdlStructMemberTypeInitializer s_MapMMdbQueryDef_SMdbSecLoginReturn(&s_MMdbQueryDef_SMdbSecLoginReturn_MapMemberTypeInfo,s_MMdbQueryDef_SMdbSecLoginReturn_MemberTypeInfo,2);
 static CSdlStructMemberTypeInitializer s_MMdbQueryDef_SMdbSecLoginReturn(s_MMdbQueryDef_SMdbSecLoginReturn_MemberTypeInfo,
@@ -1624,83 +1230,8 @@ SMdbSecLoginReturn::SMdbSecLoginReturn() : sdl::CSdlBasicStructObject(),
 	init();
 }
 
-SMdbSecLoginReturn::SMdbSecLoginReturn(obb_stream& stream) : sdl::CSdlBasicStructObject() ,
-    m_iLoginFlag(0),
-    m_strMsg()
-{ 
-	init();
-	stream >> *this;
-}
-
-SMdbSecLoginReturn::SMdbSecLoginReturn(const SMdbSecLoginReturn& rhs) : sdl::CSdlBasicStructObject(rhs),
-    m_iLoginFlag(0),
-    m_strMsg()
-{ 
-    init();
-    m_iMarkerNum = rhs.m_iMarkerNum;
-    m_iFieldNum = rhs.m_iFieldNum;
-    for(int i=0;i<rhs.get_markerNum();i++)
-    {
-        m_pllUsedMarker[i] = rhs.m_pllUsedMarker[i];
-        m_pllMarker[i] = rhs.m_pllMarker[i];
-    }
-    if (rhs.m_pllUsedMarker[0] & BIT_LOGIN_FLAG)
-        m_iLoginFlag = rhs.m_iLoginFlag;
-    if (rhs.m_pllUsedMarker[0] & BIT_MSG)
-        m_strMsg = rhs.m_strMsg;
-}
-
 SMdbSecLoginReturn::~SMdbSecLoginReturn()
 { 
-}
-
-SMdbSecLoginReturn& SMdbSecLoginReturn::operator=(const SMdbSecLoginReturn& rhs) 
-{
-    if ( this != &rhs )
-    {
-        Clear();
-        sdl::CSdlBasicStructObject::operator = (rhs);
-        m_iMarkerNum = rhs.m_iMarkerNum;
-        m_iFieldNum = rhs.m_iFieldNum;
-        for(int i=0;i<rhs.get_markerNum();i++)
-        {
-            m_pllUsedMarker[i] = rhs.m_pllUsedMarker[i];
-            m_pllMarker[i] = rhs.m_pllMarker[i];
-        }
-        if (rhs.m_pllUsedMarker[0] & BIT_LOGIN_FLAG)
-            m_iLoginFlag = rhs.m_iLoginFlag;
-        if (rhs.m_pllUsedMarker[0] & BIT_MSG)
-            m_strMsg = rhs.m_strMsg;
-    }
-    return *this;
-}
-
-bool SMdbSecLoginReturn::operator==(const SMdbSecLoginReturn& rhs) const
-{
-    if ( this == &rhs ) return true;
-    if(m_iMarkerNum != rhs.m_iMarkerNum) return false;
-    if(m_iFieldNum != rhs.m_iFieldNum) return false;
-    for(int i=0;i<m_iMarkerNum;i++)
-    {
-        if ( m_pllUsedMarker[i] != rhs.m_pllUsedMarker[i] || m_pllMarker[i] != rhs.m_pllMarker[i] )
-        {
-            return false;
-        }
-    }
-    if ((m_pllMarker[0]&BIT_LOGIN_FLAG) && !(m_iLoginFlag == rhs.m_iLoginFlag)) return false;
-    if ((m_pllMarker[0]&BIT_MSG) && !(m_strMsg == rhs.m_strMsg)) return false;
-    return true;
-}
-
-bool SMdbSecLoginReturn::operator<(const SMdbSecLoginReturn& rhs) const
-{
-    return !( *this == rhs );
-/*
-	else
-	{
-		return m_pComparer->lessThan(this,&rhs);
-	}
-*/
 }
 
 const sdl::CSdlTypeInfo& SMdbSecLoginReturn::get_typeInfo() const
@@ -1727,23 +1258,6 @@ void SMdbSecLoginReturn::Clear()
     m_strMsg.clear();
 }
 
-void SMdbSecLoginReturn::Clear4Pool()
-{
-	for(int i=0;i<1;i++)
-	{
-		m_arrllMarker[i] = 0;
-		m_arrllUsedMarker[i] = 0;
-	}
-    m_iLoginFlag = 0;
-    m_strMsg.clear();
-}
-
-CSdlBasicObject* SMdbSecLoginReturn::create_object()
-{
-    return new SMdbSecLoginReturn();
-}
-static CSdlCreateObjectInitializer s_MMdbQueryDef_SMdbSecLoginReturn_SdlCreateObjectInitializer("SMdbSecLoginReturn", SMdbSecLoginReturn::create_object);
-
 const void* SMdbSecLoginReturn::get_addressTable(const void* pTable[2]) const
 {
     if ( pTable != 0 )
@@ -1754,10 +1268,8 @@ const void* SMdbSecLoginReturn::get_addressTable(const void* pTable[2]) const
     }
     return &m_iLoginFlag;
 }
-#endif
 
-#if !defined(SDL_SELECTED_API) || defined(SDL_USE_MMDBQUERYDEF_SMDBSECLOGINRETURNLIST)
-// list definition for SMdbSecLoginReturnList
+
 SMdbSecLoginReturnList::SMdbSecLoginReturnList() : sdl::CSdlBasicListObject(),poolvector<SMdbSecLoginReturn>()
 {
 }
@@ -1778,10 +1290,7 @@ void* SMdbSecLoginReturnList::append_item()
 
 void SMdbSecLoginReturnList::change_size(const int iNewSize)
 {
-    //resize(iNewSize > 0 ? iNewSize : 0 );
     resize(iNewSize > 0 ? iNewSize : 0);
-   //if(iNewSize > 0) resize(iNewSize);
-   //else clear();
 }
 
 const void* SMdbSecLoginReturnList::get_addrOfFirstItem() const
@@ -1840,4 +1349,4 @@ const sdl::CSdlTypeInfo& SMdbSecLoginReturnList::get_typeInfo() const
 {
     return s_cTypeInfo4MMdbQueryDef_SMdbSecLoginReturnList;
 }
-#endif
+
