@@ -17,18 +17,13 @@
 
 
 typedef AISTD set<int64_t>::iterator SET_ITER ;
-enum
-{
-	SIZE_OF_IMSI   = 15,
-	SIZE_OF_MSISDN = 11
-};
 
 enum
 {
 	TOKEN_IMSI   = 1,
-	TOKEN_MSISDN = 2,
-	TOKEN_QUIT   = 3
+	TOKEN_MSISDN = 2
 };
+
 enum
 {
 	E_SERV_TYPR   = 1,
@@ -51,7 +46,6 @@ struct Stable
 	int32 iIndexType;
 };
 
-//{"TableName","Index,IndexType"}
 static AISTD vector<Stable> TableIndex = {
 	{"CUser", "", 0},
 	{"CUserAcctRel", "m_llServId", 1},
@@ -87,26 +81,26 @@ static AISTD vector<Stable> TableIndex = {
 class MdbServerLogic
 {
 public:
-    MdbServerLogic();
+    MdbServerLogic(int queryFlag, aistring queryNum);
     ~MdbServerLogic();
 	int32 init();
     int32 getUserInfoListFromBuf(const char * strBuf, int32 nLen, AISTD set<int64_t> & setID, const int32& idType);
-    int32 queryMDB( aistring & strInput, int32 nType);
+    int32 queryMDB(aistring & strOutput);
     int32 loginmdb();
-    int32 postMdb(const char* strTableName, const char* szQuerySql);
-    int32 queryUser(const char* strTableName, int32 nType, const char* strBillId);
-    int32 queryTable(const char* strTableName, const char* strIdxField, int32 iIndexType, AISTD set<int64_t>& lstBillId);
+    aistring postMdb(const char* strTableName, const char* szQuerySql);
+    aistring queryUser(const char* strTableName);
+    aistring queryTable(const char* strTableName, const char* strIdxField, int32 iIndexType, AISTD set<int64_t>& lstBillId);
+	void start();
 
-public:
-    aistring strTempBak;
+private:
+	int queryFlag;
+	aistring queryNum;
+	aistring result_;
     aistring strUserName;
     aistring strPasswd;
     aistring strRatUserName;
     aistring strRatPasswd;
     aistring strXcKeyPath;
-	aistring strConfigFile;
-	aistring strVal;
-	aistring strlogfile;
     MMdbQueryDef::SMdbQueryReturn g_cReturnMDB;
     MMdbQueryDef::SMdbQuery g_cQueryMDB;
 

@@ -524,15 +524,6 @@ namespace mdbquery
             MMdbQueryDef::SMdbQueryReturn& cParamOut,
             SOBSession* pOBSession = NULL);
         
-        void Asyn4Querymdbinfo(
-            const MMdbQueryDef::SMdbQuery& cParamIn,
-            sal::CMessageSequence& cMsgSeq,
-            SOBSession* pOBSession = NULL);
-        
-        MMdbQueryDef::SMdbQueryReturn& Ret4Querymdbinfo(
-            const sal::CMessageSequence& cMsgSeq,
-            SOBSession* pOBSession = NULL);
-        
         virtual int32 Map4Querymdbinfo(
             const MMdbQueryDef::SMdbQuery& cParamIn,
             MMdbQueryDef::SMdbQueryList& lstParamIn,
@@ -565,15 +556,6 @@ namespace mdbquery
         void Post4Mdblogin(
             const MMdbQueryDef::SMdbSecLogin& cParamIn,
             MMdbQueryDef::SMdbSecLoginReturn& cParamOut,
-            SOBSession* pOBSession = NULL);
-        
-        void Asyn4Mdblogin(
-            const MMdbQueryDef::SMdbSecLogin& cParamIn,
-            sal::CMessageSequence& cMsgSeq,
-            SOBSession* pOBSession = NULL);
-        
-        MMdbQueryDef::SMdbSecLoginReturn& Ret4Mdblogin(
-            const sal::CMessageSequence& cMsgSeq,
             SOBSession* pOBSession = NULL);
         
         virtual int32 Map4Mdblogin(
@@ -610,15 +592,6 @@ namespace mdbquery
             MMdbQueryDef::SMdbQueryReturn& cParamOut,
             SOBSession* pOBSession = NULL);
         
-        void Asyn4Queryratmdbinfo(
-            const MMdbQueryDef::SMdbQuery& cParamIn,
-            sal::CMessageSequence& cMsgSeq,
-            SOBSession* pOBSession = NULL);
-        
-        MMdbQueryDef::SMdbQueryReturn& Ret4Queryratmdbinfo(
-            const sal::CMessageSequence& cMsgSeq,
-            SOBSession* pOBSession = NULL);
-        
         virtual int32 Map4Queryratmdbinfo(
             const MMdbQueryDef::SMdbQuery& cParamIn,
             MMdbQueryDef::SMdbQueryList& lstParamIn,
@@ -651,15 +624,6 @@ namespace mdbquery
         void Post4Ratmdblogin(
             const MMdbQueryDef::SMdbSecLogin& cParamIn,
             MMdbQueryDef::SMdbSecLoginReturn& cParamOut,
-            SOBSession* pOBSession = NULL);
-        
-        void Asyn4Ratmdblogin(
-            const MMdbQueryDef::SMdbSecLogin& cParamIn,
-            sal::CMessageSequence& cMsgSeq,
-            SOBSession* pOBSession = NULL);
-        
-        MMdbQueryDef::SMdbSecLoginReturn& Ret4Ratmdblogin(
-            const sal::CMessageSequence& cMsgSeq,
             SOBSession* pOBSession = NULL);
         
         virtual int32 Map4Ratmdblogin(

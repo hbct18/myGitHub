@@ -1,17 +1,14 @@
 #include "mdbServer_logic.h"
 
 
-MdbServerLogic::MdbServerLogic()
+MdbServerLogic::MdbServerLogic(int queryFlag, aistring queryNum)
+	: queryFlag(queryFlag), queryNum(queryNum)
 {
-    strTempBak = "";
     strUserName = "";
     strPasswd = "";
     strRatUserName = "";
     strRatPasswd = "";
-	strVal = "";
     strXcKeyPath = "$HOME/ipc/";
-	strConfigFile = "mdb_query.xml";
-	strlogfile = "./mdb_query.log";
 }
 
 MdbServerLogic::~MdbServerLogic()
@@ -21,14 +18,14 @@ MdbServerLogic::~MdbServerLogic()
 int32 MdbServerLogic::init()
 {
 	aiconfig::AiConfig *pConfig = aiconfig::AiConfig::GetInstance();
-	if (-1 == pConfig->InitConfigData(aiconfig::XML_FILE, strConfigFile.c_str()))
+	if (-1 == pConfig->InitConfigData(aiconfig::XML_FILE, "mdb_query.xml"))
 	{
 		LOG_ERROR(0, "InitConfigData Error\n");
 		return -1;
 	}
 	pConfig->ReadVal(pConfig->GetConfigContainer(), "/root/common_config/xc_key_path", strXcKeyPath);
 	
-	if (-1 == cdk::strings::ConvertEnv(strXcKeyPath, strVal))
+	if (-1 == cdk::strings::ConvertEnv(strXcKeyPath, strXcKeyPath))
 	{
 		LOG_ERROR(0, "xc_key_path env error!\n");
 		return -1;
@@ -40,10 +37,35 @@ int32 MdbServerLogic::init()
 	strRatPasswd = strPasswd;
 	pConfig->ReadVal(pConfig->GetConfigContainer(), "/root/mdb_query/rat_user_name", strRatUserName);
 	pConfig->ReadVal(pConfig->GetConfigContainer(), "/root/mdb_query/rat_passwd", strRatPasswd);
-	//pConfig->ReadVal(pConfig->GetConfigContainer(), "/root/mdb_query/log_file", strlogfile);
-	cdk::log::SetFileLogger(strlogfile.c_str());
+	cdk::log::SetFileLogger("mdb_query.log");
+
+	try
+	{
+		sal::Startup();
+	}
+	catch (SAL_EXCEPTION & e)
+	{
+		LOG_ERROR(0, "sal startup fail!%s\n", e.get_message().c_str());
+		return -1;
+	}
+	try
+	{
+		xc::Attach(strXcKeyPath.c_str());
+	}
+	catch (...)
+	{
+		LOG_ERROR(0, "xc attach fail!\n");
+		return -1;
+	}
 
 	return 0;
+}
+
+void MdbServerLogic::start()
+{
+	init();
+	queryMDB(result_);
+	printf(result_.c_str());
 }
 
 int32 MdbServerLogic::getUserInfoListFromBuf(const char * strBuf, 
@@ -124,10 +146,10 @@ int32 MdbServerLogic::getUserInfoListFromBuf(const char * strBuf,
 		++ nNextPos;
 		nLastPos = nNextPos;//for next record
 	}
-	return 1;
+	return 0;
 }
 
-int32 MdbServerLogic::queryMDB( aistring & strInput, int32 nType)
+int32 MdbServerLogic::queryMDB(aistring & strOutput)
 {
     AISTD set<int64_t> lstUserID;
 	AISTD set<int64_t> lstAcctID;
@@ -145,7 +167,7 @@ int32 MdbServerLogic::queryMDB( aistring & strInput, int32 nType)
 
 	int32 iIndexType = 1;
 
-	printf("user_info:\n");
+	strOutput += "user_info:\n";
 
 	for (auto tb : TableIndex)
 	{
@@ -157,15 +179,15 @@ int32 MdbServerLogic::queryMDB( aistring & strInput, int32 nType)
 		}
 		lstBillId = vctBillIdList[iIndexType - 1];
 		
-		printf("[{table_name: %s, table_records:\n", tb.strTableName.c_str());
+		strOutput = strOutput + "[{table_name: " + tb.strTableName + ", table_records:\n";
 
 		if (tb.strTableName == "CUser" || tb.strTableName == "CUserMap")
 		{
-			queryUser(tb.strTableName.c_str(), nType, strInput.c_str());
+			strOutput += queryUser(tb.strTableName.c_str());
 		}
 		else
 		{
-			queryTable(tb.strTableName.c_str(), tb.strIndexField.c_str(), iIndexType, lstBillId);
+			strOutput += queryTable(tb.strTableName.c_str(), tb.strIndexField.c_str(), iIndexType, lstBillId);
 		}
 
 		for (int32 pos = 0; pos < vctRelTable.size(); pos++)
@@ -175,8 +197,9 @@ int32 MdbServerLogic::queryMDB( aistring & strInput, int32 nType)
 				getUserInfoListFromBuf(g_cReturnMDB.get_result().c_str(), strlen(g_cReturnMDB.get_result().c_str()), vctBillIdList[pos], pos + 1);
 			}
 		}
-		printf("}]\n\n");
+		strOutput += "}]\n\n";
 	}
+	return 0;
 }
 
 int32 MdbServerLogic::loginmdb()
@@ -211,7 +234,7 @@ int32 MdbServerLogic::loginmdb()
 	return 0;
 }
 
-int32 MdbServerLogic::postMdb(const char* strTableName, const char* szQuerySql)
+aistring MdbServerLogic::postMdb(const char* strTableName, const char* szQuerySql)
 {
     mdbquery::CMdbQuery g_cMdbQuery;
 	g_cQueryMDB.Clear();
@@ -233,47 +256,47 @@ int32 MdbServerLogic::postMdb(const char* strTableName, const char* szQuerySql)
 	catch (err_info_service::CAIException& err)
 	{
 		LOG_ERROR(0, "err %s", err.get_message().c_str());
-		return -1;
+		return err.get_message();
 	}
 	catch (...)
 	{
 		LOG_ERROR(0, "sys errno:%d, sys errmsg:%s !", errno, strerror(errno));
-		return -1;
+		return strerror(errno);
 	}
-
-	printf("%s", g_cReturnMDB.get_result().c_str());
+	return g_cReturnMDB.get_result();
 }
 
-int32 MdbServerLogic::queryUser(const char* strTableName, int32 nType, const char* strBillId)
+aistring MdbServerLogic::queryUser(const char* strTableName)
 {
     char szQuerySql[512] = {0};
-	if (nType == TOKEN_IMSI)
+	if (queryFlag == TOKEN_IMSI)
 	{
-		snprintf(szQuerySql, sizeof(szQuerySql) - 1, "select * from %s where m_szImsi = '%s';", strTableName, strBillId);
+		snprintf(szQuerySql, sizeof(szQuerySql) - 1, "select * from %s where m_szImsi = '%s';", strTableName, queryNum.c_str());
 	}
-	else if (nType == TOKEN_MSISDN)
+	else if (queryFlag == TOKEN_MSISDN)
 	{
 		if (0 == strcmp(strTableName, "CUserMap"))
 		{
-			snprintf(szQuerySql, sizeof(szQuerySql) - 1, "select * from %s where m_llMsisdn = %lld;", strTableName, cdk::strings::Atol64(strBillId));
+			snprintf(szQuerySql, sizeof(szQuerySql) - 1, "select * from %s where m_llMsisdn = %lld;", strTableName, cdk::strings::Atol64(queryNum.c_str()));
 		}
 		else
 		{
-			snprintf(szQuerySql, sizeof(szQuerySql) - 1, "select * from %s where m_szMsisdn = '%s';", strTableName, strBillId);
+			snprintf(szQuerySql, sizeof(szQuerySql) - 1, "select * from %s where m_szMsisdn = '%s';", strTableName, queryNum.c_str());
 		}
 	}
-	postMdb(strTableName, szQuerySql);
+	return postMdb(strTableName, szQuerySql);
 }
 
-int32 MdbServerLogic::queryTable(const char* strTableName, 
+aistring MdbServerLogic::queryTable(const char* strTableName, 
     const char* strIdxField, int32 iIndexType, AISTD set<int64_t>& lstBillId)
 {
+	aistring str;
     for (SET_ITER itr = lstBillId.begin(); itr != lstBillId.end(); ++itr)
 	{
 		char szQuerySql[512] = {0};
 		snprintf(szQuerySql, sizeof(szQuerySql) - 1, "select * from %s where %s = %lld;", strTableName, strIdxField, *itr);
 
-		postMdb(strTableName, szQuerySql);
+		str += postMdb(strTableName, szQuerySql);
 	}
-	return 0;
+	return str;
 }
