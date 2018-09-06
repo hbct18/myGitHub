@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <root>
     <common_config>
-        <xc_key_path>/data01/zjgrp/zjv8cs/ipc</xc_key_path>
-        <mdb_domains>
+        <xc_key_path>$HOME/ipc</xc_key_path>
+        <!--<mdb_domains>
             <mdb_domain>
                 <name>sss_mdb</name>
                 <iscloud>true</iscloud>
@@ -73,8 +73,47 @@
                 <iscloud>false</iscloud>
                 <type>aimdb</type>
             </mdb_domain>
+        </mdb_domains-->
+
+        <mdb_domains>
+            <mdb_domain>
+                <name>user_info</name>
+                <iscloud>true</iscloud>
+                <type>boostdb</type>
+            </mdb_domain>
+            <mdb_domain>
+                <name>public_mdb</name>
+                <iscloud>false</iscloud>
+                <type>aimdb</type>
+            </mdb_domain>
+            <mdb_domain>
+                <name>rat_mdb</name>
+                <iscloud>true</iscloud>
+                <type/>
+            </mdb_domain>
+            <mdb_domain>
+                <name>dupcheck</name>
+                <iscloud>true</iscloud>
+                <type/>
+            </mdb_domain>
+            <mdb_domain>
+                <name>addup</name>
+                <iscloud>true</iscloud>
+                <type/>
+            </mdb_domain>
+            <mdb_domain>
+                <name>rasmdb</name>
+                <iscloud>true</iscloud>
+                <type/>
+            </mdb_domain>
+            <mdb_domain>
+                <name>ismp_mdb</name>
+                <iscloud>false</iscloud>
+                <type>aimdb</type>
+            </mdb_domain>
         </mdb_domains>
-        <mdb_pools>
+
+        <!--mdb_pools>
             <mdb_pool>
                 <pool_alias>abm_mdb</pool_alias>
                 <mdb_domain>abm</mdb_domain>
@@ -378,6 +417,128 @@
                 <strategy>No STRATEGY</strategy>
                 <strategy_params>
                 </strategy_params>
+            </mdb_pool>
+        </mdb_pools-->
+        <mdb_pools>
+            <mdb_pool>
+                <pool_alias>addupmdb_a1</pool_alias>
+                <mdb_domain>addup</mdb_domain>
+                <mdb_host>20.26.29.205</mdb_host>
+                <mdb_port>25100</mdb_port>
+                <timeout>3000</timeout>
+                <max_num>100</max_num>
+                <min_num>1</min_num>
+                <username>null</username>
+                <password>null</password>
+                <get_timeout>3000</get_timeout>
+                <post_timeout>3000</post_timeout>
+                <strategy>No STRATEGY</strategy>
+                <strategy_params/>
+            </mdb_pool>
+            <mdb_pool>
+                <pool_alias>user_info_a2</pool_alias>
+                <mdb_domain>user_info</mdb_domain>
+                <mdb_host>20.26.37.13</mdb_host>
+                <mdb_port>22100</mdb_port>
+                <timeout>3000</timeout>
+                <max_num>100</max_num>
+                <min_num>1</min_num>
+                <username>null</username>
+                <password>null</password>
+                <get_timeout>3000</get_timeout>
+                <post_timeout>3000</post_timeout>
+                <strategy>No STRATEGY</strategy>
+                <strategy_params/>
+            </mdb_pool>
+             <mdb_pool>
+                <pool_alias>ismp_mdb</pool_alias>
+                <mdb_domain>ismp_mdb</mdb_domain>
+                <mdb_host>20.26.29.206</mdb_host>
+                <mdb_port>28100</mdb_port>
+                <timeout>30000</timeout>
+                <max_num>100</max_num>
+                <min_num>1</min_num>
+                <username>null</username>
+                <password>null</password>
+                <get_timeout>30000</get_timeout>
+                <post_timeout>30000</post_timeout>
+                <strategy>No STRATEGY</strategy>
+                <strategy_params/>
+            </mdb_pool>
+            <mdb_pool>
+                <pool_alias>zwmdb_a1</pool_alias>
+                <mdb_domain>rasmdb</mdb_domain>
+                <mdb_host>20.26.29.206</mdb_host>
+                <mdb_port>27100</mdb_port>
+                <timeout>30000</timeout>
+                <max_num>100</max_num>
+                <min_num>1</min_num>
+                <username>null</username>
+                <password>null</password>
+                <get_timeout>30000</get_timeout>
+                <post_timeout>30000</post_timeout>
+                <strategy>No STRATEGY</strategy>
+                <strategy_params/>
+            </mdb_pool>
+             <mdb_pool>
+                <pool_alias>dupcheckmdb_a1</pool_alias>
+                <mdb_domain>dupcheck</mdb_domain>
+                <mdb_host>20.26.29.205</mdb_host>
+                <mdb_port>24100</mdb_port>
+                <timeout>3000</timeout>
+                <max_num>100</max_num>
+                <min_num>1</min_num>
+                <username>null</username>
+                <password>null</password>
+                <get_timeout>3000</get_timeout>
+                <post_timeout>3000</post_timeout>
+                <strategy>No STRATEGY</strategy>
+                <strategy_params/>
+            </mdb_pool>
+             <mdb_pool>
+                <pool_alias>ratmdb_a1</pool_alias>
+                <mdb_domain>rat_mdb</mdb_domain>
+                <mdb_host>20.26.37.13</mdb_host>
+                <mdb_port>23100</mdb_port>
+                <timeout>3000</timeout>
+                <max_num>100</max_num>
+                <min_num>1</min_num>
+                <username>null</username>
+                <password>null</password>
+                <get_timeout>3000</get_timeout>
+                <post_timeout>3000</post_timeout>
+                <strategy>No STRATEGY</strategy>
+                <strategy_params/>
+            </mdb_pool>
+            <mdb_pool>
+                <pool_alias>user_info_a1</pool_alias>
+                <mdb_domain>user_info</mdb_domain>
+                <mdb_host>20.26.37.12</mdb_host>
+                <mdb_port>22100</mdb_port>
+                <timeout>3000</timeout>
+                <max_num>100</max_num>
+                <min_num>1</min_num>
+                <username>null</username>
+                <password>null</password>
+                <get_timeout>3000</get_timeout>
+                <post_timeout>3000</post_timeout>
+                <strategy>No STRATEGY</strategy>
+                <strategy_params/>
+            </mdb_pool>
+             <mdb_pool>
+                <pool_alias>public_mdb</pool_alias>
+                <mdb_domain>public_mdb</mdb_domain>
+                <mdb_host>20.26.37.12</mdb_host>
+                <mdb_port>21100</mdb_port>
+                <timeout>3000</timeout>
+                <max_num>100</max_num>
+                <min_num>1</min_num>
+                <username>null</username>
+                <password>null</password>
+                <get_timeout>3000</get_timeout>
+                <post_timeout>3000</post_timeout>
+                <strategy>No STRATEGY</strategy>
+                <strategy_params/>
             </mdb_pool>
         </mdb_pools>
 	</common_config>

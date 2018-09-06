@@ -13,27 +13,39 @@
 #include <public/sdl/sdl_basic.h>
 #include <public/sdl/sdl_stream.h>
 
+#ifdef SDL_SELECTED_API
+#include "OpenBossApp.h"
+#endif
+
 #include "sal/sal.h"
 
 
 namespace MMdbQueryDef
 {
+    #if !defined(SDL_SELECTED_API) || defined(SDL_USE_MMDBQUERYDEF_SMDBQUERY)
     class SMdbQuery : public sdl::CSdlBasicStructObject
     {
-    public:
-        static const uint64     BIT_FLAG;
-        static const uint64     BIT_TABLE_NAME;
-        static const uint64     BIT_QUERY;
-        static const uint64     BITS_ALL_MARKER;
-        static const uint64     BITS_NOT_NULL_MARKER;
-        static const uint64     BITS_DB_MARKER;
-        static const uint64     BITS_NOT_NULL_MARKER_ARR[];
-        static const uint64     BITS_DB_MARKER_ARR[];
-        static const int        IMPORT_TABLE_COUNT;
-        static const int        MEMBER_FIELD_COUNT;
-        static const char*      SZ_TYPE_NAME;
-        static const char*      ARRAY_IMPORT_TABLES[];
-        static const            sdl::SSdlMemberTypeInfo* ARRAY_MEMBER_TYPE_INFO;
+    public: // constant definitions
+        enum { // field indexes
+            IDX_FLAG,
+            IDX_TABLE_NAME,
+            IDX_QUERY,
+            MAX_FIELD_INDEX
+        };
+
+        static const uint64 BIT_FLAG;
+        static const uint64 BIT_TABLE_NAME;
+        static const uint64 BIT_QUERY;
+        static const uint64    BITS_ALL_MARKER;
+        static const uint64    BITS_NOT_NULL_MARKER;
+        static const uint64    BITS_DB_MARKER;
+        static const uint64    BITS_NOT_NULL_MARKER_ARR[];
+        static const uint64    BITS_DB_MARKER_ARR[];
+        static const int       IMPORT_TABLE_COUNT;
+        static const int       MEMBER_FIELD_COUNT;
+        static const char*     SZ_TYPE_NAME;
+        static const char*     ARRAY_IMPORT_TABLES[];
+        static const sdl::SSdlMemberTypeInfo* ARRAY_MEMBER_TYPE_INFO;
 
     private:
     	uint64	m_arrllMarker[1];
@@ -42,13 +54,58 @@ namespace MMdbQueryDef
 
     public:
         SMdbQuery();
+        //SMdbQuery(const aiallocator<SMdbQuery>& alloc);
+        SMdbQuery(obb_stream& stream);
+        SMdbQuery(const SMdbQuery& rhs);
         ~SMdbQuery();
+        SMdbQuery& operator=(const SMdbQuery& rhs);
+        bool operator==(const SMdbQuery& rhs) const;
+
+        virtual bool operator<(const SMdbQuery& rhs) const;
 
         const sdl::CSdlTypeInfo& get_typeInfo() const;
         const CClassDesc& class_desc() const;
         const void* get_addressTable(const void* pTable[3]) const;
 
         void Clear();
+        void Clear4Pool();
+        static CSdlBasicObject* create_object();
+    public:
+      inline  int64 get_flag() const
+        {
+            return m_llFlag;
+        }
+
+      inline int64& flag()
+        {
+            m_pllMarker[0] |= BIT_FLAG;
+            m_pllUsedMarker[0] |= BIT_FLAG;
+            return m_llFlag;
+        }
+
+      inline const aistring& get_tableName() const
+        {
+            return m_strTableName;
+        }
+
+      inline aistring& tableName()
+        {
+            m_pllMarker[0] |= BIT_TABLE_NAME;
+            m_pllUsedMarker[0] |= BIT_TABLE_NAME;
+            return m_strTableName;
+        }
+
+      inline const aistring& get_query() const
+        {
+            return m_strQuery;
+        }
+
+      inline aistring& query()
+        {
+            m_pllMarker[0] |= BIT_QUERY;
+            m_pllUsedMarker[0] |= BIT_QUERY;
+            return m_strQuery;
+        }
 
     public:
         inline void set_flag(const int64& value)
@@ -77,8 +134,12 @@ namespace MMdbQueryDef
         aistring		m_strTableName;
         aistring		m_strQuery;
     };
+    extern "C" sdl::SSdlMemberTypeAddress get_MMdbQueryDef_SMdbQuery_MemberTypeAddress();
+    extern "C" const char* get_MMdbQueryDef_SMdbQuery_MemberType_IndexString4Lua();
+    #endif
 
-
+    #if !defined(SDL_SELECTED_API) || defined(SDL_USE_MMDBQUERYDEF_SMDBQUERYLIST)
+    // list definition for SMdbQueryList
     class SMdbQueryList : public sdl::CSdlBasicListObject, public poolvector<SMdbQuery>
     {
     public:
@@ -91,15 +152,16 @@ namespace MMdbQueryDef
         void* get(int index);
         const void* get(int index) const;
         void Erase(int index);
-    	void Clear();
+    	 void Clear();
         const sdl::CSdlTypeInfo& get_typeInfo() const;
         int get_itemType() const;
         int get_itemSize() const;
         int get_containerType() const;
     	static CSdlBasicObject* create_object();
     };
+    #endif
 
-
+    #if !defined(SDL_SELECTED_API) || defined(SDL_USE_MMDBQUERYDEF_SMDBQUERYRETURN)
     class SMdbQueryReturn : public sdl::CSdlBasicStructObject
     {
     public: // constant definitions
@@ -127,23 +189,52 @@ namespace MMdbQueryDef
 
     public:
         SMdbQueryReturn();
+        //SMdbQueryReturn(const aiallocator<SMdbQueryReturn>& alloc);
+        SMdbQueryReturn(obb_stream& stream);
+        SMdbQueryReturn(const SMdbQueryReturn& rhs);
         ~SMdbQueryReturn();
+        SMdbQueryReturn& operator=(const SMdbQueryReturn& rhs);
+        bool operator==(const SMdbQueryReturn& rhs) const;
+
+        virtual bool operator<(const SMdbQueryReturn& rhs) const;
 
         const sdl::CSdlTypeInfo& get_typeInfo() const;
         const CClassDesc& class_desc() const;
         const void* get_addressTable(const void* pTable[1]) const;
 
+        void Clear();
+        void Clear4Pool();
+        static CSdlBasicObject* create_object();
     public:
       inline const aistring& get_result() const
         {
             return m_strResult;
         }
 
+      inline aistring& result()
+        {
+            m_pllMarker[0] |= BIT_RESULT;
+            m_pllUsedMarker[0] |= BIT_RESULT;
+            return m_strResult;
+        }
+
+    public:
+        inline void set_result(const aistring& value)
+        {
+            m_strResult = value;
+            m_pllMarker[0] |= BIT_RESULT;
+            m_pllUsedMarker[0] |= BIT_RESULT;
+        }
+
     private: // data members
         aistring		m_strResult;
     };
+    extern "C" sdl::SSdlMemberTypeAddress get_MMdbQueryDef_SMdbQueryReturn_MemberTypeAddress();
+    extern "C" const char* get_MMdbQueryDef_SMdbQueryReturn_MemberType_IndexString4Lua();
+    #endif
 
-
+    #if !defined(SDL_SELECTED_API) || defined(SDL_USE_MMDBQUERYDEF_SMDBQUERYRETURNLIST)
+    // list definition for SMdbQueryReturnList
     class SMdbQueryReturnList : public sdl::CSdlBasicListObject, public poolvector<SMdbQueryReturn>
     {
     public:
@@ -163,8 +254,9 @@ namespace MMdbQueryDef
         int get_containerType() const;
     	static CSdlBasicObject* create_object();
     };
+    #endif
 
-
+    #if !defined(SDL_SELECTED_API) || defined(SDL_USE_MMDBQUERYDEF_SMDBSECLOGIN)
     class SMdbSecLogin : public sdl::CSdlBasicStructObject
     {
     public: // constant definitions
@@ -194,13 +286,46 @@ namespace MMdbQueryDef
 
     public:
         SMdbSecLogin();
+        //SMdbSecLogin(const aiallocator<SMdbSecLogin>& alloc);
+        SMdbSecLogin(obb_stream& stream);
+        SMdbSecLogin(const SMdbSecLogin& rhs);
         ~SMdbSecLogin();
+        SMdbSecLogin& operator=(const SMdbSecLogin& rhs);
+        bool operator==(const SMdbSecLogin& rhs) const;
+
+        virtual bool operator<(const SMdbSecLogin& rhs) const;
 
         const sdl::CSdlTypeInfo& get_typeInfo() const;
         const CClassDesc& class_desc() const;
         const void* get_addressTable(const void* pTable[2]) const;
 
         void Clear();
+        void Clear4Pool();
+        static CSdlBasicObject* create_object();
+    public:
+      inline const aistring& get_userName() const
+        {
+            return m_strUserName;
+        }
+
+      inline aistring& userName()
+        {
+            m_pllMarker[0] |= BIT_USER_NAME;
+            m_pllUsedMarker[0] |= BIT_USER_NAME;
+            return m_strUserName;
+        }
+
+      inline const aistring& get_passwd() const
+        {
+            return m_strPasswd;
+        }
+
+      inline aistring& passwd()
+        {
+            m_pllMarker[0] |= BIT_PASSWD;
+            m_pllUsedMarker[0] |= BIT_PASSWD;
+            return m_strPasswd;
+        }
 
     public:
         inline void set_userName(const aistring& value)
@@ -221,8 +346,12 @@ namespace MMdbQueryDef
         aistring		m_strUserName;
         aistring		m_strPasswd;
     };
+    extern "C" sdl::SSdlMemberTypeAddress get_MMdbQueryDef_SMdbSecLogin_MemberTypeAddress();
+    extern "C" const char* get_MMdbQueryDef_SMdbSecLogin_MemberType_IndexString4Lua();
+    #endif
 
-
+    #if !defined(SDL_SELECTED_API) || defined(SDL_USE_MMDBQUERYDEF_SMDBSECLOGINLIST)
+    // list definition for SMdbSecLoginList
     class SMdbSecLoginList : public sdl::CSdlBasicListObject, public poolvector<SMdbSecLogin>
     {
     public:
@@ -242,8 +371,9 @@ namespace MMdbQueryDef
         int get_containerType() const;
     	static CSdlBasicObject* create_object();
     };
+    #endif
 
-
+    #if !defined(SDL_SELECTED_API) || defined(SDL_USE_MMDBQUERYDEF_SMDBSECLOGINRETURN)
     class SMdbSecLoginReturn : public sdl::CSdlBasicStructObject
     {
     public: // constant definitions
@@ -273,20 +403,72 @@ namespace MMdbQueryDef
 
     public:
         SMdbSecLoginReturn();
+        //SMdbSecLoginReturn(const aiallocator<SMdbSecLoginReturn>& alloc);
+        SMdbSecLoginReturn(obb_stream& stream);
+        SMdbSecLoginReturn(const SMdbSecLoginReturn& rhs);
         ~SMdbSecLoginReturn();
+        SMdbSecLoginReturn& operator=(const SMdbSecLoginReturn& rhs);
+        bool operator==(const SMdbSecLoginReturn& rhs) const;
+
+        virtual bool operator<(const SMdbSecLoginReturn& rhs) const;
 
         const sdl::CSdlTypeInfo& get_typeInfo() const;
         const CClassDesc& class_desc() const;
         const void* get_addressTable(const void* pTable[2]) const;
 
         void Clear();
+        void Clear4Pool();
+        static CSdlBasicObject* create_object();
+    public:
+      inline  int32 get_loginFlag() const
+        {
+            return m_iLoginFlag;
+        }
+
+      inline int32& loginFlag()
+        {
+            m_pllMarker[0] |= BIT_LOGIN_FLAG;
+            m_pllUsedMarker[0] |= BIT_LOGIN_FLAG;
+            return m_iLoginFlag;
+        }
+
+      inline const aistring& get_msg() const
+        {
+            return m_strMsg;
+        }
+
+      inline aistring& msg()
+        {
+            m_pllMarker[0] |= BIT_MSG;
+            m_pllUsedMarker[0] |= BIT_MSG;
+            return m_strMsg;
+        }
+
+    public:
+        inline void set_loginFlag(const int32& value)
+        {
+            m_iLoginFlag = value;
+            m_pllMarker[0] |= BIT_LOGIN_FLAG;
+            m_pllUsedMarker[0] |= BIT_LOGIN_FLAG;
+        }
+
+        inline void set_msg(const aistring& value)
+        {
+            m_strMsg = value;
+            m_pllMarker[0] |= BIT_MSG;
+            m_pllUsedMarker[0] |= BIT_MSG;
+        }
 
     private: // data members
         int32		m_iLoginFlag;
         aistring		m_strMsg;
     };
+    extern "C" sdl::SSdlMemberTypeAddress get_MMdbQueryDef_SMdbSecLoginReturn_MemberTypeAddress();
+    extern "C" const char* get_MMdbQueryDef_SMdbSecLoginReturn_MemberType_IndexString4Lua();
+    #endif
 
-
+    #if !defined(SDL_SELECTED_API) || defined(SDL_USE_MMDBQUERYDEF_SMDBSECLOGINRETURNLIST)
+    // list definition for SMdbSecLoginReturnList
     class SMdbSecLoginReturnList : public sdl::CSdlBasicListObject, public poolvector<SMdbSecLoginReturn>
     {
     public:
@@ -306,7 +488,7 @@ namespace MMdbQueryDef
         int get_containerType() const;
     	static CSdlBasicObject* create_object();
     };
-
+    #endif
 }; // namespace MMdbQueryDef
 
 
@@ -340,6 +522,15 @@ namespace mdbquery
         void Post4Querymdbinfo(
             const MMdbQueryDef::SMdbQuery& cParamIn,
             MMdbQueryDef::SMdbQueryReturn& cParamOut,
+            SOBSession* pOBSession = NULL);
+        
+        void Asyn4Querymdbinfo(
+            const MMdbQueryDef::SMdbQuery& cParamIn,
+            sal::CMessageSequence& cMsgSeq,
+            SOBSession* pOBSession = NULL);
+        
+        MMdbQueryDef::SMdbQueryReturn& Ret4Querymdbinfo(
+            const sal::CMessageSequence& cMsgSeq,
             SOBSession* pOBSession = NULL);
         
         virtual int32 Map4Querymdbinfo(
@@ -376,6 +567,15 @@ namespace mdbquery
             MMdbQueryDef::SMdbSecLoginReturn& cParamOut,
             SOBSession* pOBSession = NULL);
         
+        void Asyn4Mdblogin(
+            const MMdbQueryDef::SMdbSecLogin& cParamIn,
+            sal::CMessageSequence& cMsgSeq,
+            SOBSession* pOBSession = NULL);
+        
+        MMdbQueryDef::SMdbSecLoginReturn& Ret4Mdblogin(
+            const sal::CMessageSequence& cMsgSeq,
+            SOBSession* pOBSession = NULL);
+        
         virtual int32 Map4Mdblogin(
             const MMdbQueryDef::SMdbSecLogin& cParamIn,
             MMdbQueryDef::SMdbSecLoginList& lstParamIn,
@@ -410,6 +610,15 @@ namespace mdbquery
             MMdbQueryDef::SMdbQueryReturn& cParamOut,
             SOBSession* pOBSession = NULL);
         
+        void Asyn4Queryratmdbinfo(
+            const MMdbQueryDef::SMdbQuery& cParamIn,
+            sal::CMessageSequence& cMsgSeq,
+            SOBSession* pOBSession = NULL);
+        
+        MMdbQueryDef::SMdbQueryReturn& Ret4Queryratmdbinfo(
+            const sal::CMessageSequence& cMsgSeq,
+            SOBSession* pOBSession = NULL);
+        
         virtual int32 Map4Queryratmdbinfo(
             const MMdbQueryDef::SMdbQuery& cParamIn,
             MMdbQueryDef::SMdbQueryList& lstParamIn,
@@ -442,6 +651,15 @@ namespace mdbquery
         void Post4Ratmdblogin(
             const MMdbQueryDef::SMdbSecLogin& cParamIn,
             MMdbQueryDef::SMdbSecLoginReturn& cParamOut,
+            SOBSession* pOBSession = NULL);
+        
+        void Asyn4Ratmdblogin(
+            const MMdbQueryDef::SMdbSecLogin& cParamIn,
+            sal::CMessageSequence& cMsgSeq,
+            SOBSession* pOBSession = NULL);
+        
+        MMdbQueryDef::SMdbSecLoginReturn& Ret4Ratmdblogin(
+            const sal::CMessageSequence& cMsgSeq,
             SOBSession* pOBSession = NULL);
         
         virtual int32 Map4Ratmdblogin(
