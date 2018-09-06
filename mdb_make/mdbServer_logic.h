@@ -87,21 +87,17 @@ static AISTD vector<Stable> TableIndex = {
 class MdbServerLogic
 {
 public:
-    MdbServerLogic(int queryFlag, aistring queryNum);
+    MdbServerLogic();
     ~MdbServerLogic();
     int32 getUserInfoListFromBuf(const char * strBuf, int32 nLen, AISTD set<int64_t> & setID, const int32& idType);
-    int32 queryMDB( aistring & strOutput);
+    int32 queryMDB( aistring & strInput, int32 nType);
     int32 loginmdb();
-    aistring postMdb(const char* strTableName, const char* szQuerySql);
-    aistring queryUser(const char* strTableName);
-    aistring queryTable(const char* strTableName, const char* strIdxField, int32 iIndexType, AISTD set<int64_t>& lstBillId);
-	int32 init();
-	void start();
+    int32 postMdb(const char* strTableName, const char* szQuerySql);
+    int32 queryUser(const char* strTableName, int32 nType, const char* strBillId);
+    int32 queryTable(const char* strTableName, const char* strIdxField, int32 iIndexType, AISTD set<int64_t>& lstBillId);
 
 public:
-	int queryFlag;
-	aistring queryNum;
-	aistring result_;
+    aistring strTempBak;
     aistring strUserName;
     aistring strPasswd;
     aistring strRatUserName;

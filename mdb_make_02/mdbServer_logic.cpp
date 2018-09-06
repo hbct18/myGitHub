@@ -9,6 +9,9 @@ MdbServerLogic::MdbServerLogic(int queryFlag, aistring queryNum)
     strRatUserName = "";
     strRatPasswd = "";
     strXcKeyPath = "$HOME/ipc/";
+	strConfigFile = "mdb_query.xml";
+	strlogfile = "mdb_query.log";
+	result_ = "";
 }
 
 MdbServerLogic::~MdbServerLogic()
@@ -18,26 +21,24 @@ MdbServerLogic::~MdbServerLogic()
 int32 MdbServerLogic::init()
 {
 	aiconfig::AiConfig *pConfig = aiconfig::AiConfig::GetInstance();
-	if (-1 == pConfig->InitConfigData(aiconfig::XML_FILE, "mdb_query.xml"))
+	if (-1 == pConfig->InitConfigData(aiconfig::XML_FILE, strConfigFile.c_str()))
 	{
-		LOG_ERROR(0, "InitConfigData Error\n");
+		LOG_ERROR(0, "InitConfigData Error");
 		return -1;
 	}
 	pConfig->ReadVal(pConfig->GetConfigContainer(), "/root/common_config/xc_key_path", strXcKeyPath);
-	
-	if (-1 == cdk::strings::ConvertEnv(strXcKeyPath, strXcKeyPath))
+	aistring strVal;
+	if (-1 == cdk::strings::ConvertEnv(strXcKeyPath, strVal))
 	{
 		LOG_ERROR(0, "xc_key_path env error!\n");
-		return -1;
 	}
-	
 	pConfig->ReadVal(pConfig->GetConfigContainer(), "/root/mdb_query/user_name", strUserName);
 	pConfig->ReadVal(pConfig->GetConfigContainer(), "/root/mdb_query/passwd", strPasswd);
 	strRatUserName = strUserName;
 	strRatPasswd = strPasswd;
 	pConfig->ReadVal(pConfig->GetConfigContainer(), "/root/mdb_query/rat_user_name", strRatUserName);
 	pConfig->ReadVal(pConfig->GetConfigContainer(), "/root/mdb_query/rat_passwd", strRatPasswd);
-	cdk::log::SetFileLogger("mdb_query.log");
+	cdk::log::SetFileLogger(strlogfile.c_str());
 
 	try
 	{
@@ -50,21 +51,35 @@ int32 MdbServerLogic::init()
 	}
 	try
 	{
-		xc::Attach(strXcKeyPath.c_str());
+		xc::Attach(strVal.c_str());
+		LOG_ERROR(0, strVal.c_str());
 	}
 	catch (...)
 	{
 		LOG_ERROR(0, "xc attach fail!\n");
 		return -1;
 	}
-
 	return 0;
 }
 
 void MdbServerLogic::start()
 {
 	init();
-	queryMDB(result_);
+	switch (queryFlag)
+		{
+		case TOKEN_IMSI:
+			queryMDB(queryNum, TOKEN_IMSI);
+			break;
+
+		case TOKEN_MSISDN:
+			queryMDB(queryNum, TOKEN_MSISDN);
+			break;
+
+		default:
+			LOG_ERROR(0, "QueryFlag error, required is 1 or 2, %d is provided.", queryFlag);
+			break;
+		}
+	sal::Shutdown();
 	printf(result_.c_str());
 }
 
@@ -152,7 +167,7 @@ int32 MdbServerLogic::getUserInfoListFromBuf(const char * strBuf,
 	return 1;
 }
 
-int32 MdbServerLogic::queryMDB( aistring & strOutput)
+int32 MdbServerLogic::queryMDB( aistring & strInput, int32 nType)
 {
     AISTD set<int64_t> lstUserID;
 	AISTD set<int64_t> lstAcctID;
@@ -168,10 +183,10 @@ int32 MdbServerLogic::queryMDB( aistring & strOutput)
 
 	loginmdb();
 
+	
+	int32 iCount = 0;
+	aistring strFieldIndex;
 	int32 iIndexType = 1;
-
-	strOutput += "user_info:\n";
-
 	for (auto tb : TableIndex)
 	{
 		g_cReturnMDB.Clear();
@@ -181,12 +196,16 @@ int32 MdbServerLogic::queryMDB( aistring & strOutput)
 			iIndexType = 1;
 		}
 		lstBillId = vctBillIdList[iIndexType - 1];
-		
-		strOutput = strOutput + "[{table_name: " + tb.strTableName + ", table_records:\n";
+		iCount++;
+		result_ += "-------------------------------------------------------------------\n";
+		result_ += cdk::strings::Itoa(iCount);
+		result_ += " Table ";
+		result_ += tb.strTableName;
+		result_ += "\n";
 
 		if (tb.strTableName == "CUser" || tb.strTableName == "CUserMap")
 		{
-			queryUser(tb.strTableName.c_str());
+			queryUser(tb.strTableName.c_str(), nType, strInput.c_str());
 		}
 		else
 		{
@@ -200,9 +219,8 @@ int32 MdbServerLogic::queryMDB( aistring & strOutput)
 				getUserInfoListFromBuf(g_cReturnMDB.get_result().c_str(), strlen(g_cReturnMDB.get_result().c_str()), vctBillIdList[pos], pos + 1);
 			}
 		}
-		strOutput += "}]\n\n";
+		result_ += "\n";
 	}
-	return 0;
 }
 
 int32 MdbServerLogic::loginmdb()
@@ -237,7 +255,7 @@ int32 MdbServerLogic::loginmdb()
 	return 0;
 }
 
-aistring MdbServerLogic::postMdb(const char* strTableName, const char* szQuerySql)
+int32 MdbServerLogic::postMdb(const char* strTableName, const char* szQuerySql)
 {
     mdbquery::CMdbQuery g_cMdbQuery;
 	g_cQueryMDB.Clear();
@@ -259,56 +277,57 @@ aistring MdbServerLogic::postMdb(const char* strTableName, const char* szQuerySq
 	catch (err_info_service::CAIException& err)
 	{
 		LOG_ERROR(0, "err %s", err.get_message().c_str());
-		return err.get_message();
+		return -1;
 	}
 	catch (...)
 	{
 		LOG_ERROR(0, "sys errno:%d, sys errmsg:%s !", errno, strerror(errno));
-		return strerror(errno);
+		return -1;
 	}
-
-	return g_cReturnMDB.get_result();
+	result_ += g_cReturnMDB.get_result();
 }
 
-aistring MdbServerLogic::queryUser(const char* strTableName)
+int32 MdbServerLogic::queryUser(const char* strTableName, int32 nType, const char* strBillId)
 {
     char szQuerySql[512] = {0};
-	if (queryFlag == TOKEN_IMSI)
+	if (nType == TOKEN_IMSI)
 	{
-		snprintf(szQuerySql, sizeof(szQuerySql) - 1, "select * from %s where m_szImsi = '%s';", strTableName, queryNum.c_str());
+		snprintf(szQuerySql, sizeof(szQuerySql) - 1, "select * from %s where m_szImsi = '%s';", strTableName, strBillId);
 	}
-	else if (queryFlag == TOKEN_MSISDN)
+	else if (nType == TOKEN_MSISDN)
 	{
 		if (0 == strcmp(strTableName, "CUserMap"))
 		{
-			snprintf(szQuerySql, sizeof(szQuerySql) - 1, "select * from %s where m_llMsisdn = %lld;", strTableName, cdk::strings::Atol64(queryNum.c_str()));
+			snprintf(szQuerySql, sizeof(szQuerySql) - 1, "select * from %s where m_llMsisdn = %lld;", strTableName, cdk::strings::Atol64(strBillId));
 		}
 		else
 		{
-			snprintf(szQuerySql, sizeof(szQuerySql) - 1, "select * from %s where m_szMsisdn = '%s';", strTableName, queryNum.c_str());
+			snprintf(szQuerySql, sizeof(szQuerySql) - 1, "select * from %s where m_szMsisdn = '%s';", strTableName, strBillId);
 		}
 	}
-	return postMdb(strTableName, szQuerySql);
+	postMdb(strTableName, szQuerySql);
 }
 
-aistring MdbServerLogic::queryTable(const char* strTableName, 
+int32 MdbServerLogic::queryTable(const char* strTableName, 
     const char* strIdxField, int32 iIndexType, AISTD set<int64_t>& lstBillId)
 {
-	aistring str;
     for (SET_ITER itr = lstBillId.begin(); itr != lstBillId.end(); ++itr)
 	{
-		/*if ( E_SERV_TYPR == iIndexType)
+		if ( E_SERV_TYPR == iIndexType)
 		{
-			printf("-- user id: %lld --:\n", *itr);
+			result_ += "-- user id: ";
 		}
 		else if (E_GROUP_TYPE == iIndexType )
 		{
-			printf("-- group id: %lld --:\n", *itr);
-		}*/
+			result_ += "-- group id: ";
+		}
+		int64 llId = *itr;
+		result_ += cdk::strings::Itoa(llId);
+		result_ += " --:\n";
 		char szQuerySql[512] = {0};
 		snprintf(szQuerySql, sizeof(szQuerySql) - 1, "select * from %s where %s = %lld;", strTableName, strIdxField, *itr);
 
-		str += postMdb(strTableName, szQuerySql);
+		postMdb(strTableName, szQuerySql);
 	}
-	return str;
+	return 0;
 }
