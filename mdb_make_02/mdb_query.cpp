@@ -16,12 +16,6 @@
 int queryType = 0;
 aistring strInput;
 
-void* do_query(void *arg)
-{
-	MdbServerLogic* logic = (MdbServerLogic*) arg;
-	logic->start();
-}
-
 
 //-------------------------------------------------------------------------------------
 //  main Function
@@ -34,7 +28,7 @@ int32 main(int argc, char** argv)
 
 	int32  nOpt;
 
-	while ((nOpt = getopt( argc, argv, "i:I:m:M:t:T:n:N:")) != EOF )
+	while ((nOpt = getopt( argc, argv, "t:T:n:N:")) != EOF )
 	{
 		switch (nOpt)
 		{
@@ -54,12 +48,8 @@ int32 main(int argc, char** argv)
 	}
 
 	MdbServerLogic *logic = new MdbServerLogic(queryType,strInput);
+	logic->start();
 
-	pthread_t ntid;
-	pthread_create(&ntid, NULL, do_query, (void*)logic);
-
-	pthread_join(ntid, NULL);
-
-	return 1;
+	return 0;
 }
 

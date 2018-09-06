@@ -19,19 +19,28 @@
 
 namespace MMdbQueryDef
 {
-    class SMdbQuery : public sdl::CSdlBasicStructObject
-    {
+    // 合并class
+    class CMdbQueryTotal : public sdl::CSdlBasicStructObject
+    {  
     public: 
 
-        static const uint64 BIT_FLAG;
-        static const uint64 BIT_TABLE_NAME;
-        static const uint64 BIT_QUERY;
-        //static const uint64    BITS_DB_MARKER;
-        static const uint64    BITS_NOT_NULL_MARKER_ARR[];
-        static const uint64    BITS_DB_MARKER_ARR[];
-        //static const int       IMPORT_TABLE_COUNT;
-        //static const int       MEMBER_FIELD_COUNT;
-        //static const char*     SZ_TYPE_NAME;
+        static const uint64     BIT_FLAG;
+        static const uint64     BIT_TABLE_NAME;
+        static const uint64     BIT_QUERY;
+        static const uint64     BITS_DB_MARKER;
+        static const uint64     BITS_NOT_NULL_MARKER_ARR[];
+        static const uint64     BITS_DB_MARKER_ARR[];
+        static const int        IMPORT_TABLE_COUNT;
+        static const int        MEMBER_FIELD_COUNT;
+        static const char*      SZ_TYPE_NAME;
+
+        static const uint64     BIT_RESULT;
+
+        static const uint64     BIT_USER_NAME;
+        static const uint64     BIT_PASSWD;
+
+        static const uint64     BIT_LOGIN_FLAG;
+        static const uint64     BIT_MSG;
 
     private:
     	uint64	m_arrllMarker[1];
@@ -39,16 +48,14 @@ namespace MMdbQueryDef
     	void	inline init();
 
     public:
-        SMdbQuery();
-        ~SMdbQuery();
+        CMdbQueryTotal();
+        ~CMdbQueryTotal();
 
         const sdl::CSdlTypeInfo& get_typeInfo() const{};
         const CClassDesc& class_desc() const{};
         const void* get_addressTable(const void* pTable[3]) const{};
 
-        void Clear();
-        void Clear4Pool();
-        static CSdlBasicObject* create_object();
+        void queryClear();
     public:
       inline  int64 get_flag() const
         {
@@ -108,57 +115,12 @@ namespace MMdbQueryDef
             m_pllUsedMarker[0] |= BIT_QUERY;
         }
 
-    private: // data members
-        int64		m_llFlag;
-        aistring		m_strTableName;
-        aistring		m_strQuery;
-    };
-
-
-    // list definition for SMdbQueryList
-    class SMdbQueryList : public sdl::CSdlBasicListObject, public poolvector<SMdbQuery>
-    {
-    public:
-    	SMdbQueryList();
-    	void Clear();
-    };
-
-
-    class SMdbQueryReturn : public sdl::CSdlBasicStructObject
-    {
-    public:
-
-        static const uint64 BIT_RESULT;
-        //static const uint64    BITS_DB_MARKER;
-        static const uint64    BITS_NOT_NULL_MARKER_ARR[];
-        static const uint64    BITS_DB_MARKER_ARR[];
-        //static const int       IMPORT_TABLE_COUNT;
-        //static const int       MEMBER_FIELD_COUNT;
-        //static const char*     SZ_TYPE_NAME;
-
-    private:
-    	uint64	m_arrllMarker[1];
-    	uint64	m_arrllUsedMarker[1];
-    	void	inline init();
-
-    public:
-        SMdbQueryReturn();
-        ~SMdbQueryReturn();
-
-        const sdl::CSdlTypeInfo& get_typeInfo() const{};
-        const CClassDesc& class_desc() const{};
-        const void* get_addressTable(const void* pTable[1]) const{};
-
-        void Clear();
-        void Clear4Pool();
-        static CSdlBasicObject* create_object();
-    public:
-      inline const aistring& get_result() const
+        inline const aistring& get_result() const
         {
             return m_strResult;
         }
 
-      inline aistring& result()
+        inline aistring& result()
         {
             m_pllMarker[0] |= BIT_RESULT;
             m_pllUsedMarker[0] |= BIT_RESULT;
@@ -173,68 +135,25 @@ namespace MMdbQueryDef
             m_pllUsedMarker[0] |= BIT_RESULT;
         }
 
-    private: // data members
-        aistring		m_strResult;
-    };
-
-
-    // list definition for SMdbQueryReturnList
-    class SMdbQueryReturnList : public sdl::CSdlBasicListObject, public poolvector<SMdbQueryReturn>
-    {
     public:
-    	SMdbQueryReturnList();
-    	void Clear();
-    };
-
-
-    class SMdbSecLogin : public sdl::CSdlBasicStructObject
-    {
-    public:
-
-        static const uint64 BIT_USER_NAME;
-        static const uint64 BIT_PASSWD;
-        //static const uint64    BITS_DB_MARKER;
-        static const uint64    BITS_NOT_NULL_MARKER_ARR[];
-        static const uint64    BITS_DB_MARKER_ARR[];
-        //static const int       IMPORT_TABLE_COUNT;
-        //static const int       MEMBER_FIELD_COUNT;
-        //static const char*     SZ_TYPE_NAME;
-
-    private:
-    	uint64	m_arrllMarker[1];
-    	uint64	m_arrllUsedMarker[1];
-    	void	inline init();
-
-    public:
-        SMdbSecLogin();
-        ~SMdbSecLogin();
-
-        const sdl::CSdlTypeInfo& get_typeInfo() const{};
-        const CClassDesc& class_desc() const{};
-        const void* get_addressTable(const void* pTable[2]) const{};
-
-        void Clear();
-        void Clear4Pool();
-        static CSdlBasicObject* create_object();
-    public:
-      inline const aistring& get_userName() const
+        inline const aistring& get_userName() const
         {
             return m_strUserName;
         }
 
-      inline aistring& userName()
+        inline aistring& userName()
         {
             m_pllMarker[0] |= BIT_USER_NAME;
             m_pllUsedMarker[0] |= BIT_USER_NAME;
             return m_strUserName;
         }
 
-      inline const aistring& get_passwd() const
+        inline const aistring& get_passwd() const
         {
             return m_strPasswd;
         }
 
-      inline aistring& passwd()
+        inline aistring& passwd()
         {
             m_pllMarker[0] |= BIT_PASSWD;
             m_pllUsedMarker[0] |= BIT_PASSWD;
@@ -256,69 +175,25 @@ namespace MMdbQueryDef
             m_pllUsedMarker[0] |= BIT_PASSWD;
         }
 
-    private: // data members
-        aistring		m_strUserName;
-        aistring		m_strPasswd;
-    };
-
-
-    // list definition for SMdbSecLoginList
-    class SMdbSecLoginList : public sdl::CSdlBasicListObject, public poolvector<SMdbSecLogin>
-    {
     public:
-    	SMdbSecLoginList();
-    	void Clear();
-    };
-
-
-    class SMdbSecLoginReturn : public sdl::CSdlBasicStructObject
-    {
-    public: 
-
-        static const uint64 BIT_LOGIN_FLAG;
-        static const uint64 BIT_MSG;
-        //static const uint64    BITS_DB_MARKER;
-        static const uint64    BITS_NOT_NULL_MARKER_ARR[];
-        static const uint64    BITS_DB_MARKER_ARR[];
-        //static const int       IMPORT_TABLE_COUNT;
-        //static const int       MEMBER_FIELD_COUNT;
-        //static const char*     SZ_TYPE_NAME;
-
-    private:
-    	uint64	m_arrllMarker[1];
-    	uint64	m_arrllUsedMarker[1];
-    	void	inline init();
-
-    public:
-        SMdbSecLoginReturn();
-        ~SMdbSecLoginReturn();
-
-        const sdl::CSdlTypeInfo& get_typeInfo() const{};
-        const CClassDesc& class_desc() const{};
-        const void* get_addressTable(const void* pTable[2]) const{};
-
-        void Clear();
-        void Clear4Pool();
-        static CSdlBasicObject* create_object();
-    public:
-      inline  int32 get_loginFlag() const
+        inline  int32 get_loginFlag() const
         {
             return m_iLoginFlag;
         }
 
-      inline int32& loginFlag()
+        inline int32& loginFlag()
         {
             m_pllMarker[0] |= BIT_LOGIN_FLAG;
             m_pllUsedMarker[0] |= BIT_LOGIN_FLAG;
             return m_iLoginFlag;
         }
 
-      inline const aistring& get_msg() const
+        inline const aistring& get_msg() const
         {
             return m_strMsg;
         }
 
-      inline aistring& msg()
+        inline aistring& msg()
         {
             m_pllMarker[0] |= BIT_MSG;
             m_pllUsedMarker[0] |= BIT_MSG;
@@ -341,18 +216,26 @@ namespace MMdbQueryDef
         }
 
     private: // data members
-        int32		m_iLoginFlag;
+        int64           m_llFlag;
+        aistring		m_strTableName;
+        aistring		m_strQuery;
+
+        aistring		m_strResult;
+
+        aistring		m_strUserName;
+        aistring		m_strPasswd;
+
+        int32		    m_iLoginFlag;
         aistring		m_strMsg;
+
     };
 
-    // list definition for SMdbSecLoginReturnList
-    class SMdbSecLoginReturnList : public sdl::CSdlBasicListObject, public poolvector<SMdbSecLoginReturn>
+    class CMdbQueryTotalList : public sdl::CSdlBasicListObject, public poolvector<CMdbQueryTotal>
     {
     public:
-    	SMdbSecLoginReturnList();
-    	void Clear();
+        CMdbQueryTotalList();
+        void Clear();
     };
-
 }; // namespace MMdbQueryDef
 
 
@@ -384,42 +267,42 @@ namespace mdbquery
         static const sal::CUri kUri4Querymdbinfo;
 
         void Post4Querymdbinfo(
-            const MMdbQueryDef::SMdbQuery& cParamIn,
-            MMdbQueryDef::SMdbQueryReturn& cParamOut,
+            const MMdbQueryDef::CMdbQueryTotal& cParamIn,
+            MMdbQueryDef::CMdbQueryTotal& cParamOut,
             SOBSession* pOBSession = NULL);
         
         void Asyn4Querymdbinfo(
-            const MMdbQueryDef::SMdbQuery& cParamIn,
+            const MMdbQueryDef::CMdbQueryTotal& cParamIn,
             sal::CMessageSequence& cMsgSeq,
             SOBSession* pOBSession = NULL);
         
-        MMdbQueryDef::SMdbQueryReturn& Ret4Querymdbinfo(
+        MMdbQueryDef::CMdbQueryTotal& Ret4Querymdbinfo(
             const sal::CMessageSequence& cMsgSeq,
             SOBSession* pOBSession = NULL);
         
         virtual int32 Map4Querymdbinfo(
-            const MMdbQueryDef::SMdbQuery& cParamIn,
-            MMdbQueryDef::SMdbQueryList& lstParamIn,
+            const MMdbQueryDef::CMdbQueryTotal& cParamIn,
+            MMdbQueryDef::CMdbQueryTotalList& lstParamIn,
             MRouteDef::SRouteInfoList& lstRouteInfo,
             SOBSession* pOBSession = NULL);
         
         virtual int32 Reduce4Querymdbinfo(
-            const MMdbQueryDef::SMdbQuery& cParamIn,
-            const MMdbQueryDef::SMdbQueryList& lstParamIn,
+            const MMdbQueryDef::CMdbQueryTotal& cParamIn,
+            const MMdbQueryDef::CMdbQueryTotalList& lstParamIn,
             const MRouteDef::SRouteInfoList& lstRouteInfo,
             const MSalExpDef::SPostExceptionList& lstPostException,
-            const MMdbQueryDef::SMdbQueryReturnList& lstParamOut,
-            MMdbQueryDef::SMdbQueryReturn& cParamOut,
+            const MMdbQueryDef::CMdbQueryTotalList& lstParamOut,
+            MMdbQueryDef::CMdbQueryTotal& cParamOut,
             SOBSession* pOBSession = NULL);
         
         void Request4Querymdbinfo(
-            const MMdbQueryDef::SMdbQueryList& lstParamIn,
+            const MMdbQueryDef::CMdbQueryTotalList& lstParamIn,
             const MRouteDef::SRouteInfoList& lstRouteInfo,
             MSalExpDef::SPostExceptionList& lstPostException,
             SOBSession* pOBSession = NULL);
         
         void Response4Querymdbinfo(
-            MMdbQueryDef::SMdbQueryReturnList& lstParamOut,
+            MMdbQueryDef::CMdbQueryTotalList& lstParamOut,
             const MRouteDef::SRouteInfoList& lstRouteInfo,
             MSalExpDef::SPostExceptionList& lstPostException,
             SOBSession* pOBSession = NULL);
@@ -427,42 +310,42 @@ namespace mdbquery
         static const sal::CUri kUri4Mdblogin;
 
         void Post4Mdblogin(
-            const MMdbQueryDef::SMdbSecLogin& cParamIn,
-            MMdbQueryDef::SMdbSecLoginReturn& cParamOut,
+            const MMdbQueryDef::CMdbQueryTotal& cParamIn,
+            MMdbQueryDef::CMdbQueryTotal& cParamOut,
             SOBSession* pOBSession = NULL);
         
         void Asyn4Mdblogin(
-            const MMdbQueryDef::SMdbSecLogin& cParamIn,
+            const MMdbQueryDef::CMdbQueryTotal& cParamIn,
             sal::CMessageSequence& cMsgSeq,
             SOBSession* pOBSession = NULL);
         
-        MMdbQueryDef::SMdbSecLoginReturn& Ret4Mdblogin(
+        MMdbQueryDef::CMdbQueryTotal& Ret4Mdblogin(
             const sal::CMessageSequence& cMsgSeq,
             SOBSession* pOBSession = NULL);
         
         virtual int32 Map4Mdblogin(
-            const MMdbQueryDef::SMdbSecLogin& cParamIn,
-            MMdbQueryDef::SMdbSecLoginList& lstParamIn,
+            const MMdbQueryDef::CMdbQueryTotal& cParamIn,
+            MMdbQueryDef::CMdbQueryTotalList& lstParamIn,
             MRouteDef::SRouteInfoList& lstRouteInfo,
             SOBSession* pOBSession = NULL);
         
         virtual int32 Reduce4Mdblogin(
-            const MMdbQueryDef::SMdbSecLogin& cParamIn,
-            const MMdbQueryDef::SMdbSecLoginList& lstParamIn,
+            const MMdbQueryDef::CMdbQueryTotal& cParamIn,
+            const MMdbQueryDef::CMdbQueryTotalList& lstParamIn,
             const MRouteDef::SRouteInfoList& lstRouteInfo,
             const MSalExpDef::SPostExceptionList& lstPostException,
-            const MMdbQueryDef::SMdbSecLoginReturnList& lstParamOut,
-            MMdbQueryDef::SMdbSecLoginReturn& cParamOut,
+            const MMdbQueryDef::CMdbQueryTotalList& lstParamOut,
+            MMdbQueryDef::CMdbQueryTotal& cParamOut,
             SOBSession* pOBSession = NULL);
         
         void Request4Mdblogin(
-            const MMdbQueryDef::SMdbSecLoginList& lstParamIn,
+            const MMdbQueryDef::CMdbQueryTotalList& lstParamIn,
             const MRouteDef::SRouteInfoList& lstRouteInfo,
             MSalExpDef::SPostExceptionList& lstPostException,
             SOBSession* pOBSession = NULL);
         
         void Response4Mdblogin(
-            MMdbQueryDef::SMdbSecLoginReturnList& lstParamOut,
+            MMdbQueryDef::CMdbQueryTotalList& lstParamOut,
             const MRouteDef::SRouteInfoList& lstRouteInfo,
             MSalExpDef::SPostExceptionList& lstPostException,
             SOBSession* pOBSession = NULL);
@@ -470,42 +353,42 @@ namespace mdbquery
         static const sal::CUri kUri4Queryratmdbinfo;
 
         void Post4Queryratmdbinfo(
-            const MMdbQueryDef::SMdbQuery& cParamIn,
-            MMdbQueryDef::SMdbQueryReturn& cParamOut,
+            const MMdbQueryDef::CMdbQueryTotal& cParamIn,
+            MMdbQueryDef::CMdbQueryTotal& cParamOut,
             SOBSession* pOBSession = NULL);
         
         void Asyn4Queryratmdbinfo(
-            const MMdbQueryDef::SMdbQuery& cParamIn,
+            const MMdbQueryDef::CMdbQueryTotal& cParamIn,
             sal::CMessageSequence& cMsgSeq,
             SOBSession* pOBSession = NULL);
         
-        MMdbQueryDef::SMdbQueryReturn& Ret4Queryratmdbinfo(
+        MMdbQueryDef::CMdbQueryTotal& Ret4Queryratmdbinfo(
             const sal::CMessageSequence& cMsgSeq,
             SOBSession* pOBSession = NULL);
         
         virtual int32 Map4Queryratmdbinfo(
-            const MMdbQueryDef::SMdbQuery& cParamIn,
-            MMdbQueryDef::SMdbQueryList& lstParamIn,
+            const MMdbQueryDef::CMdbQueryTotal& cParamIn,
+            MMdbQueryDef::CMdbQueryTotalList& lstParamIn,
             MRouteDef::SRouteInfoList& lstRouteInfo,
             SOBSession* pOBSession = NULL);
         
         virtual int32 Reduce4Queryratmdbinfo(
-            const MMdbQueryDef::SMdbQuery& cParamIn,
-            const MMdbQueryDef::SMdbQueryList& lstParamIn,
+            const MMdbQueryDef::CMdbQueryTotal& cParamIn,
+            const MMdbQueryDef::CMdbQueryTotalList& lstParamIn,
             const MRouteDef::SRouteInfoList& lstRouteInfo,
             const MSalExpDef::SPostExceptionList& lstPostException,
-            const MMdbQueryDef::SMdbQueryReturnList& lstParamOut,
-            MMdbQueryDef::SMdbQueryReturn& cParamOut,
+            const MMdbQueryDef::CMdbQueryTotalList& lstParamOut,
+            MMdbQueryDef::CMdbQueryTotal& cParamOut,
             SOBSession* pOBSession = NULL);
         
         void Request4Queryratmdbinfo(
-            const MMdbQueryDef::SMdbQueryList& lstParamIn,
+            const MMdbQueryDef::CMdbQueryTotalList& lstParamIn,
             const MRouteDef::SRouteInfoList& lstRouteInfo,
             MSalExpDef::SPostExceptionList& lstPostException,
             SOBSession* pOBSession = NULL);
         
         void Response4Queryratmdbinfo(
-            MMdbQueryDef::SMdbQueryReturnList& lstParamOut,
+            MMdbQueryDef::CMdbQueryTotalList& lstParamOut,
             const MRouteDef::SRouteInfoList& lstRouteInfo,
             MSalExpDef::SPostExceptionList& lstPostException,
             SOBSession* pOBSession = NULL);
@@ -513,42 +396,42 @@ namespace mdbquery
         static const sal::CUri kUri4Ratmdblogin;
 
         void Post4Ratmdblogin(
-            const MMdbQueryDef::SMdbSecLogin& cParamIn,
-            MMdbQueryDef::SMdbSecLoginReturn& cParamOut,
+            const MMdbQueryDef::CMdbQueryTotal& cParamIn,
+            MMdbQueryDef::CMdbQueryTotal& cParamOut,
             SOBSession* pOBSession = NULL);
         
         void Asyn4Ratmdblogin(
-            const MMdbQueryDef::SMdbSecLogin& cParamIn,
+            const MMdbQueryDef::CMdbQueryTotal& cParamIn,
             sal::CMessageSequence& cMsgSeq,
             SOBSession* pOBSession = NULL);
         
-        MMdbQueryDef::SMdbSecLoginReturn& Ret4Ratmdblogin(
+        MMdbQueryDef::CMdbQueryTotal& Ret4Ratmdblogin(
             const sal::CMessageSequence& cMsgSeq,
             SOBSession* pOBSession = NULL);
         
         virtual int32 Map4Ratmdblogin(
-            const MMdbQueryDef::SMdbSecLogin& cParamIn,
-            MMdbQueryDef::SMdbSecLoginList& lstParamIn,
+            const MMdbQueryDef::CMdbQueryTotal& cParamIn,
+            MMdbQueryDef::CMdbQueryTotalList& lstParamIn,
             MRouteDef::SRouteInfoList& lstRouteInfo,
             SOBSession* pOBSession = NULL);
         
         virtual int32 Reduce4Ratmdblogin(
-            const MMdbQueryDef::SMdbSecLogin& cParamIn,
-            const MMdbQueryDef::SMdbSecLoginList& lstParamIn,
+            const MMdbQueryDef::CMdbQueryTotal& cParamIn,
+            const MMdbQueryDef::CMdbQueryTotalList& lstParamIn,
             const MRouteDef::SRouteInfoList& lstRouteInfo,
             const MSalExpDef::SPostExceptionList& lstPostException,
-            const MMdbQueryDef::SMdbSecLoginReturnList& lstParamOut,
-            MMdbQueryDef::SMdbSecLoginReturn& cParamOut,
+            const MMdbQueryDef::CMdbQueryTotalList& lstParamOut,
+            MMdbQueryDef::CMdbQueryTotal& cParamOut,
             SOBSession* pOBSession = NULL);
         
         void Request4Ratmdblogin(
-            const MMdbQueryDef::SMdbSecLoginList& lstParamIn,
+            const MMdbQueryDef::CMdbQueryTotalList& lstParamIn,
             const MRouteDef::SRouteInfoList& lstRouteInfo,
             MSalExpDef::SPostExceptionList& lstPostException,
             SOBSession* pOBSession = NULL);
         
         void Response4Ratmdblogin(
-            MMdbQueryDef::SMdbSecLoginReturnList& lstParamOut,
+            MMdbQueryDef::CMdbQueryTotalList& lstParamOut,
             const MRouteDef::SRouteInfoList& lstRouteInfo,
             MSalExpDef::SPostExceptionList& lstPostException,
             SOBSession* pOBSession = NULL);

@@ -17,11 +17,6 @@
 
 
 typedef AISTD set<int64_t>::iterator SET_ITER ;
-enum
-{
-	SIZE_OF_IMSI   = 15,
-	SIZE_OF_MSISDN = 11
-};
 
 enum
 {
@@ -90,7 +85,7 @@ public:
     MdbServerLogic(int queryFlag, aistring queryNum);
     ~MdbServerLogic();
     int32 getUserInfoListFromBuf(const char * strBuf, int32 nLen, AISTD set<int64_t> & setID, const int32& idType);
-    int32 queryMDB( aistring & strInput, int32 nType);
+    int32 queryMDB();
     int32 loginmdb();
     int32 postMdb(const char* strTableName, const char* szQuerySql);
     int32 queryUser(const char* strTableName, int32 nType, const char* strBillId);
@@ -109,7 +104,7 @@ public:
 	aistring strConfigFile;
 	aistring strlogfile;
 	aistring result_;
-    MMdbQueryDef::SMdbQueryReturn g_cReturnMDB;
+	MMdbQueryDef::SMdbQueryReturn g_cReturnMDB;
     MMdbQueryDef::SMdbQuery g_cQueryMDB;
 
 

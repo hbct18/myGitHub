@@ -1,5 +1,21 @@
 #include "mdbServer_logic.h"
 
+void* do_query(void *arg)
+{
+	MdbServerLogic* logic = (MdbServerLogic*) arg;
+	switch (logic->queryFlag)
+		{
+		case TOKEN_IMSI:
+		case TOKEN_MSISDN:
+		{
+			logic->queryMDB();
+			break;
+		}
+		default:
+			LOG_ERROR(0, "QueryFlag error, required is 1 or 2, %d is provided.", logic->queryFlag);
+			break;
+		}
+}
 
 MdbServerLogic::MdbServerLogic(int queryFlag, aistring queryNum)
 	: queryFlag(queryFlag), queryNum(queryNum)
@@ -65,20 +81,12 @@ int32 MdbServerLogic::init()
 void MdbServerLogic::start()
 {
 	init();
-	switch (queryFlag)
-		{
-		case TOKEN_IMSI:
-			queryMDB(queryNum, TOKEN_IMSI);
-			break;
 
-		case TOKEN_MSISDN:
-			queryMDB(queryNum, TOKEN_MSISDN);
-			break;
+	pthread_t ntid;
+	pthread_create(&ntid, NULL, do_query, (void*)this);
 
-		default:
-			LOG_ERROR(0, "QueryFlag error, required is 1 or 2, %d is provided.", queryFlag);
-			break;
-		}
+	pthread_join(ntid, NULL);
+
 	sal::Shutdown();
 	printf(result_.c_str());
 }
@@ -167,7 +175,7 @@ int32 MdbServerLogic::getUserInfoListFromBuf(const char * strBuf,
 	return 1;
 }
 
-int32 MdbServerLogic::queryMDB( aistring & strInput, int32 nType)
+int32 MdbServerLogic::queryMDB()
 {
     AISTD set<int64_t> lstUserID;
 	AISTD set<int64_t> lstAcctID;
@@ -182,7 +190,6 @@ int32 MdbServerLogic::queryMDB( aistring & strInput, int32 nType)
 	int32 nCustNum;
 
 	loginmdb();
-
 	
 	int32 iCount = 0;
 	aistring strFieldIndex;
@@ -205,7 +212,7 @@ int32 MdbServerLogic::queryMDB( aistring & strInput, int32 nType)
 
 		if (tb.strTableName == "CUser" || tb.strTableName == "CUserMap")
 		{
-			queryUser(tb.strTableName.c_str(), nType, strInput.c_str());
+			queryUser(tb.strTableName.c_str(), queryFlag, queryNum.c_str());
 		}
 		else
 		{
@@ -290,11 +297,11 @@ int32 MdbServerLogic::postMdb(const char* strTableName, const char* szQuerySql)
 int32 MdbServerLogic::queryUser(const char* strTableName, int32 nType, const char* strBillId)
 {
     char szQuerySql[512] = {0};
-	if (nType == TOKEN_IMSI)
+	if (queryFlag == TOKEN_IMSI)
 	{
 		snprintf(szQuerySql, sizeof(szQuerySql) - 1, "select * from %s where m_szImsi = '%s';", strTableName, strBillId);
 	}
-	else if (nType == TOKEN_MSISDN)
+	else if (queryFlag == TOKEN_MSISDN)
 	{
 		if (0 == strcmp(strTableName, "CUserMap"))
 		{
