@@ -89,7 +89,7 @@ public:
     int32 loginmdb();
     int32 postMdb(const char* strTableName, const char* szQuerySql);
     int32 queryUser(const char* strTableName, int32 nType, const char* strBillId);
-    int32 queryTable(const char* strTableName, const char* strIdxField, int32 iIndexType, AISTD set<int64_t>& lstBillId);
+    int32 queryTable(const char* strTableName, const char* strIdxField, AISTD set<int64_t>& lstBillId);
 	int32 init();
 	void start();
 

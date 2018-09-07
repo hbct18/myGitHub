@@ -216,7 +216,7 @@ int32 MdbServerLogic::queryMDB()
 		}
 		else
 		{
-			queryTable(tb.strTableName.c_str(), tb.strIndexField.c_str(), iIndexType, lstBillId);
+			queryTable(tb.strTableName.c_str(), tb.strIndexField.c_str(), lstBillId);
 		}
 
 		for (int32 pos = 0; pos < vctRelTable.size(); pos++)
@@ -321,21 +321,10 @@ int32 MdbServerLogic::queryUser(const char* strTableName, int32 nType, const cha
 }
 
 int32 MdbServerLogic::queryTable(const char* strTableName, 
-    const char* strIdxField, int32 iIndexType, AISTD set<int64_t>& lstBillId)
+    const char* strIdxField, AISTD set<int64_t>& lstBillId)
 {
     for (SET_ITER itr = lstBillId.begin(); itr != lstBillId.end(); ++itr)
 	{
-		/*if ( E_SERV_TYPR == iIndexType)
-		{
-			result_ += "-- user id: ";
-		}
-		else if (E_GROUP_TYPE == iIndexType )
-		{
-			result_ += "-- group id: ";
-		}
-		int64 llId = *itr;
-		result_ += cdk::strings::Itoa(llId);
-		result_ += " --:\n";*/
 		char szQuerySql[512] = {0};
 		snprintf(szQuerySql, sizeof(szQuerySql) - 1, "select * from %s where %s = %lld;", strTableName, strIdxField, *itr);
 
