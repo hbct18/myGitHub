@@ -23,15 +23,11 @@ namespace MMdbQueryDef
     {
     public: 
 
-        static const uint64 BIT_FLAG;
-        static const uint64 BIT_TABLE_NAME;
-        static const uint64 BIT_QUERY;
-        //static const uint64    BITS_DB_MARKER;
-        static const uint64    BITS_NOT_NULL_MARKER_ARR[];
-        static const uint64    BITS_DB_MARKER_ARR[];
-        //static const int       IMPORT_TABLE_COUNT;
-        //static const int       MEMBER_FIELD_COUNT;
-        //static const char*     SZ_TYPE_NAME;
+        static const uint64     BIT_FLAG;
+        static const uint64     BIT_TABLE_NAME;
+        static const uint64     BIT_QUERY;
+        static const uint64     BITS_NOT_NULL_MARKER_ARR[];
+        static const uint64     BITS_DB_MARKER_ARR[];
 
     private:
     	uint64	m_arrllMarker[1];
@@ -47,8 +43,6 @@ namespace MMdbQueryDef
         const void* get_addressTable(const void* pTable[3]) const{};
 
         void Clear();
-        void Clear4Pool();
-        static CSdlBasicObject* create_object();
     public:
       inline  int64 get_flag() const
         {
@@ -128,13 +122,9 @@ namespace MMdbQueryDef
     {
     public:
 
-        static const uint64 BIT_RESULT;
-        //static const uint64    BITS_DB_MARKER;
-        static const uint64    BITS_NOT_NULL_MARKER_ARR[];
-        static const uint64    BITS_DB_MARKER_ARR[];
-        //static const int       IMPORT_TABLE_COUNT;
-        //static const int       MEMBER_FIELD_COUNT;
-        //static const char*     SZ_TYPE_NAME;
+        static const uint64     BIT_RESULT;
+        static const uint64     BITS_NOT_NULL_MARKER_ARR[];
+        static const uint64     BITS_DB_MARKER_ARR[];
 
     private:
     	uint64	m_arrllMarker[1];
@@ -150,8 +140,6 @@ namespace MMdbQueryDef
         const void* get_addressTable(const void* pTable[1]) const{};
 
         void Clear();
-        void Clear4Pool();
-        static CSdlBasicObject* create_object();
     public:
       inline const aistring& get_result() const
         {
@@ -191,14 +179,10 @@ namespace MMdbQueryDef
     {
     public:
 
-        static const uint64 BIT_USER_NAME;
-        static const uint64 BIT_PASSWD;
-        //static const uint64    BITS_DB_MARKER;
-        static const uint64    BITS_NOT_NULL_MARKER_ARR[];
-        static const uint64    BITS_DB_MARKER_ARR[];
-        //static const int       IMPORT_TABLE_COUNT;
-        //static const int       MEMBER_FIELD_COUNT;
-        //static const char*     SZ_TYPE_NAME;
+        static const uint64     BIT_USER_NAME;
+        static const uint64     BIT_PASSWD;
+        static const uint64     BITS_NOT_NULL_MARKER_ARR[];
+        static const uint64     BITS_DB_MARKER_ARR[];
 
     private:
     	uint64	m_arrllMarker[1];
@@ -214,8 +198,6 @@ namespace MMdbQueryDef
         const void* get_addressTable(const void* pTable[2]) const{};
 
         void Clear();
-        void Clear4Pool();
-        static CSdlBasicObject* create_object();
     public:
       inline const aistring& get_userName() const
         {
@@ -275,14 +257,10 @@ namespace MMdbQueryDef
     {
     public: 
 
-        static const uint64 BIT_LOGIN_FLAG;
-        static const uint64 BIT_MSG;
-        //static const uint64    BITS_DB_MARKER;
-        static const uint64    BITS_NOT_NULL_MARKER_ARR[];
-        static const uint64    BITS_DB_MARKER_ARR[];
-        //static const int       IMPORT_TABLE_COUNT;
-        //static const int       MEMBER_FIELD_COUNT;
-        //static const char*     SZ_TYPE_NAME;
+        static const uint64     BIT_LOGIN_FLAG;
+        static const uint64     BIT_MSG;
+        static const uint64     BITS_NOT_NULL_MARKER_ARR[];
+        static const uint64     BITS_DB_MARKER_ARR[];
 
     private:
     	uint64	m_arrllMarker[1];
@@ -298,8 +276,6 @@ namespace MMdbQueryDef
         const void* get_addressTable(const void* pTable[2]) const{};
 
         void Clear();
-        void Clear4Pool();
-        static CSdlBasicObject* create_object();
     public:
       inline  int32 get_loginFlag() const
         {

@@ -1096,12 +1096,8 @@ namespace mdbquery
 const uint64 SMdbQuery::BIT_FLAG = I64(0x1);
 const uint64 SMdbQuery::BIT_TABLE_NAME = I64(0x2);
 const uint64 SMdbQuery::BIT_QUERY = I64(0x4);
-//const uint64 SMdbQuery::BITS_DB_MARKER = I64(0x0);
 const uint64 SMdbQuery::BITS_NOT_NULL_MARKER_ARR[] = {I64(0x0)};
 const uint64 SMdbQuery::BITS_DB_MARKER_ARR[] = {I64(0x0)};
-//const int SMdbQuery::IMPORT_TABLE_COUNT = 0;
-//const int SMdbQuery::MEMBER_FIELD_COUNT = 3;
-//const char* SMdbQuery::SZ_TYPE_NAME = "SMdbQuery";
 
 void inline SMdbQuery::init()
 {
@@ -1143,23 +1139,6 @@ void SMdbQuery::Clear()
     m_strQuery.clear();
 }
 
-void SMdbQuery::Clear4Pool()
-{
-	for(int i=0;i<1;i++)
-	{
-		m_arrllMarker[i] = 0;
-		m_arrllUsedMarker[i] = 0;
-	}
-    m_llFlag = 0;
-    m_strTableName.clear();
-    m_strQuery.clear();
-}
-
-CSdlBasicObject* SMdbQuery::create_object()
-{
-    return new SMdbQuery();
-}
-
 
 
 // list definition for SMdbQueryList
@@ -1175,12 +1154,8 @@ void SMdbQueryList::Clear()
 
 // struct definition for SMdbQueryReturn
 const uint64 SMdbQueryReturn::BIT_RESULT = I64(0x1);
-//const uint64 SMdbQueryReturn::BITS_DB_MARKER = I64(0x0);
 const uint64 SMdbQueryReturn::BITS_NOT_NULL_MARKER_ARR[] = {I64(0x0)};
 const uint64 SMdbQueryReturn::BITS_DB_MARKER_ARR[] = {I64(0x0)};
-//const int SMdbQueryReturn::IMPORT_TABLE_COUNT = 0;
-//const int SMdbQueryReturn::MEMBER_FIELD_COUNT = 1;
-//const char* SMdbQueryReturn::SZ_TYPE_NAME = "SMdbQueryReturn";
 
 void inline SMdbQueryReturn::init()
 {
@@ -1218,21 +1193,6 @@ void SMdbQueryReturn::Clear()
     m_strResult.clear();
 }
 
-void SMdbQueryReturn::Clear4Pool()
-{
-	for(int i=0;i<1;i++)
-	{
-		m_arrllMarker[i] = 0;
-		m_arrllUsedMarker[i] = 0;
-	}
-    m_strResult.clear();
-}
-
-CSdlBasicObject* SMdbQueryReturn::create_object()
-{
-    return new SMdbQueryReturn();
-}
-
 
 // list definition for SMdbQueryReturnList
 SMdbQueryReturnList::SMdbQueryReturnList() : sdl::CSdlBasicListObject(),poolvector<SMdbQueryReturn>()
@@ -1248,12 +1208,8 @@ void SMdbQueryReturnList::Clear()
 // struct definition for SMdbSecLogin
 const uint64 SMdbSecLogin::BIT_USER_NAME = I64(0x1);
 const uint64 SMdbSecLogin::BIT_PASSWD = I64(0x2);
-//const uint64 SMdbSecLogin::BITS_DB_MARKER = I64(0x0);
 const uint64 SMdbSecLogin::BITS_NOT_NULL_MARKER_ARR[] = {I64(0x0)};
 const uint64 SMdbSecLogin::BITS_DB_MARKER_ARR[] = {I64(0x0)};
-//const int SMdbSecLogin::IMPORT_TABLE_COUNT = 0;
-//const int SMdbSecLogin::MEMBER_FIELD_COUNT = 2;
-//const char* SMdbSecLogin::SZ_TYPE_NAME = "SMdbSecLogin";
 
 void inline SMdbSecLogin::init()
 {
@@ -1293,22 +1249,6 @@ void SMdbSecLogin::Clear()
     m_strPasswd.clear();
 }
 
-void SMdbSecLogin::Clear4Pool()
-{
-	for(int i=0;i<1;i++)
-	{
-		m_arrllMarker[i] = 0;
-		m_arrllUsedMarker[i] = 0;
-	}
-    m_strUserName.clear();
-    m_strPasswd.clear();
-}
-
-CSdlBasicObject* SMdbSecLogin::create_object()
-{
-    return new SMdbSecLogin();
-}
-
 
 
 // list definition for SMdbSecLoginList
@@ -1324,12 +1264,8 @@ void SMdbSecLoginList::Clear()
 // struct definition for SMdbSecLoginReturn
 const uint64 SMdbSecLoginReturn::BIT_LOGIN_FLAG = I64(0x1);
 const uint64 SMdbSecLoginReturn::BIT_MSG = I64(0x2);
-//const uint64 SMdbSecLoginReturn::BITS_DB_MARKER = I64(0x0);
 const uint64 SMdbSecLoginReturn::BITS_NOT_NULL_MARKER_ARR[] = {I64(0x0)};
 const uint64 SMdbSecLoginReturn::BITS_DB_MARKER_ARR[] = {I64(0x0)};
-//const int SMdbSecLoginReturn::IMPORT_TABLE_COUNT = 0;
-//const int SMdbSecLoginReturn::MEMBER_FIELD_COUNT = 2;
-//const char* SMdbSecLoginReturn::SZ_TYPE_NAME = "SMdbSecLoginReturn";
 
 void inline SMdbSecLoginReturn::init()
 {
@@ -1367,22 +1303,6 @@ void SMdbSecLoginReturn::Clear()
 	}
     m_iLoginFlag = 0;
     m_strMsg.clear();
-}
-
-void SMdbSecLoginReturn::Clear4Pool()
-{
-	for(int i=0;i<1;i++)
-	{
-		m_arrllMarker[i] = 0;
-		m_arrllUsedMarker[i] = 0;
-	}
-    m_iLoginFlag = 0;
-    m_strMsg.clear();
-}
-
-CSdlBasicObject* SMdbSecLoginReturn::create_object()
-{
-    return new SMdbSecLoginReturn();
 }
 
 

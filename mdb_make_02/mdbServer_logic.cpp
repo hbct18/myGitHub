@@ -204,11 +204,11 @@ int32 MdbServerLogic::queryMDB()
 		}
 		lstBillId = vctBillIdList[iIndexType - 1];
 		iCount++;
-		result_ += "-------------------------------------------------------------------\n";
+		//result_ += "-------------------------------------------------------------------\n";
 		result_ += cdk::strings::Itoa(iCount);
-		result_ += " Table ";
+		result_ += " [{table_name:";
 		result_ += tb.strTableName;
-		result_ += "\n";
+		result_ += " table_records:";
 
 		if (tb.strTableName == "CUser" || tb.strTableName == "CUserMap")
 		{
@@ -291,7 +291,12 @@ int32 MdbServerLogic::postMdb(const char* strTableName, const char* szQuerySql)
 		LOG_ERROR(0, "sys errno:%d, sys errmsg:%s !", errno, strerror(errno));
 		return -1;
 	}
-	result_ += g_cReturnMDB.get_result();
+	aistring str = g_cReturnMDB.get_result();
+	if (str.length() > 0)
+		str.pop_back();
+
+	result_ += str;
+	result_ += "}]\n";
 }
 
 int32 MdbServerLogic::queryUser(const char* strTableName, int32 nType, const char* strBillId)
@@ -320,7 +325,7 @@ int32 MdbServerLogic::queryTable(const char* strTableName,
 {
     for (SET_ITER itr = lstBillId.begin(); itr != lstBillId.end(); ++itr)
 	{
-		if ( E_SERV_TYPR == iIndexType)
+		/*if ( E_SERV_TYPR == iIndexType)
 		{
 			result_ += "-- user id: ";
 		}
@@ -330,7 +335,7 @@ int32 MdbServerLogic::queryTable(const char* strTableName,
 		}
 		int64 llId = *itr;
 		result_ += cdk::strings::Itoa(llId);
-		result_ += " --:\n";
+		result_ += " --:\n";*/
 		char szQuerySql[512] = {0};
 		snprintf(szQuerySql, sizeof(szQuerySql) - 1, "select * from %s where %s = %lld;", strTableName, strIdxField, *itr);
 
