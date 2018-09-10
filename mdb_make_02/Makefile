@@ -9,7 +9,7 @@ DEST_TYPE = BIN
 
 # 编译目标程序需要的源代码文件，可以带路径（但必须是绝对路径）【必须修改】
 DEST_SOURCES = 	mdb_query.cpp \
-				mdbServer_logic.cpp			
+				mdbServer_logic.cpp
 				
 # 目标的头文件安装路径，最终目录将是 $OB_REL/include/$(SUBSYSTEM)/$(HEADER_PATH)/ 【可选】
 # HEADER_PATH = 
@@ -30,7 +30,8 @@ USER_LIBRARIES = cdk_foundation$(BUILDTYPE) \
 				public_config$(BUILDTYPE) \
 				mdb_in_base$(BUILDTYPE) \
 				mdbqueryMapreduce$(BUILDTYPE) \
-				boost_thread
+				boost_thread \
+				salroutedep$(BUILDTYPE)\
 				
 #########################################################
 # 包含基本的 Makefile 规则文件

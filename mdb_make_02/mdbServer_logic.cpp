@@ -3,18 +3,7 @@
 void* do_query(void *arg)
 {
 	MdbServerLogic* logic = (MdbServerLogic*) arg;
-	switch (logic->queryFlag)
-		{
-		case TOKEN_IMSI:
-		case TOKEN_MSISDN:
-		{
-			logic->queryMDB();
-			break;
-		}
-		default:
-			LOG_ERROR(0, "QueryFlag error, required is 1 or 2, %d is provided.", logic->queryFlag);
-			break;
-		}
+	logic->queryMDB();
 }
 
 MdbServerLogic::MdbServerLogic(int queryFlag, aistring queryNum)
@@ -82,13 +71,23 @@ void MdbServerLogic::start()
 {
 	init();
 
-	pthread_t ntid;
-	pthread_create(&ntid, NULL, do_query, (void*)this);
-
-	pthread_join(ntid, NULL);
+	switch (queryFlag)
+	{
+		case TOKEN_IMSI:
+		case TOKEN_MSISDN:
+		{
+			pthread_t ntid;
+			pthread_create(&ntid, NULL, do_query, (void*)this);
+			pthread_join(ntid, NULL);
+			printf(result_.c_str());
+			break;
+		}
+		default:
+			printf("QueryFlag error, required is 1 or 2, %d is provided.\n", queryFlag);
+			break;
+	}
 
 	sal::Shutdown();
-	printf(result_.c_str());
 }
 
 int32 MdbServerLogic::getUserInfoListFromBuf(const char * strBuf, 
@@ -172,7 +171,7 @@ int32 MdbServerLogic::getUserInfoListFromBuf(const char * strBuf,
 		nLastPos = nNextPos;//for next record
 
 	}
-	return 1;
+	return 0;
 }
 
 int32 MdbServerLogic::queryMDB()
@@ -192,7 +191,6 @@ int32 MdbServerLogic::queryMDB()
 	loginmdb();
 	
 	int32 iCount = 0;
-	aistring strFieldIndex;
 	int32 iIndexType = 1;
 	for (auto tb : TableIndex)
 	{
@@ -228,6 +226,7 @@ int32 MdbServerLogic::queryMDB()
 		}
 		result_ += "\n";
 	}
+	return 0;
 }
 
 int32 MdbServerLogic::loginmdb()
@@ -297,6 +296,8 @@ int32 MdbServerLogic::postMdb(const char* strTableName, const char* szQuerySql)
 
 	result_ += str;
 	result_ += "}]\n";
+
+	return 0;
 }
 
 int32 MdbServerLogic::queryUser(const char* strTableName, int32 nType, const char* strBillId)
@@ -317,7 +318,7 @@ int32 MdbServerLogic::queryUser(const char* strTableName, int32 nType, const cha
 			snprintf(szQuerySql, sizeof(szQuerySql) - 1, "select * from %s where m_szMsisdn = '%s';", strTableName, strBillId);
 		}
 	}
-	postMdb(strTableName, szQuerySql);
+	return postMdb(strTableName, szQuerySql);
 }
 
 int32 MdbServerLogic::queryTable(const char* strTableName, 

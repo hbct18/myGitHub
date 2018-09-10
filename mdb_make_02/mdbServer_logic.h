@@ -11,7 +11,6 @@
 #include <iostream>
 #include "cdk/foundation/cdk_basedef.h"
 #include "config/app_config.h"
-#include "mdbin_pkg.h"
 #include "mdbServer_query.h"
 #include "xc/xc.h"
 
